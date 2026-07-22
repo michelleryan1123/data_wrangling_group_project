@@ -5,4 +5,10 @@
 # I am from NZ
 
 # NATHAN BHOBE nh32
+# editing and trying new branch 
+
+
+# testing from local to remote
+
+print("Hello, this is a test file for the data_test.py script.")
 # Muhammad Ikram Zikrie Bin Rahmat, mir52@uclive.ac.nz
