@@ -2,6 +2,7 @@
 
 # Group members
 # Michelle Ryan, mrr53@uclive.ac.nz, 0273303063
+# I am from NZ
 
 # NATHAN BHOBE nh32
 # editing and trying new branch 
@@ -10,3 +11,4 @@
 # testing from local to remote
 
 print("Hello, this is a test file for the data_test.py script.")
+# Muhammad Ikram Zikrie Bin Rahmat, mir52@uclive.ac.nz
