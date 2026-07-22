@@ -1,7 +1,7 @@
 # this is a test file
 
 # Group members
-# Michelle Ryan, mrr53@uclive.ac.nz, 0273303063
+# Michelle Ryan, mrr53@uclive.ac.nz
 # I am from NZ and I am studying geospatial data science
 
 # NATHAN BHOBE nh32
