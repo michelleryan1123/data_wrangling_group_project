@@ -13,3 +13,6 @@
 print("Hello, this is a test file for the data_test.py script.")
 # Muhammad Ikram Zikrie Bin Rahmat, mir52@uclive.ac.nz
 # I am from Malaysia and I am studying  data science
+
+#MUHAMMAD AMMAR BIN MOHD SYAIFUDIN, mam425@uclive.ac.nz
+#I am from Malaysia too! I'm studying data science.
