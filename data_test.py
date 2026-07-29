@@ -8,20 +8,13 @@
 # editing and trying new branch 
 
 
-<<<<<<< Updated upstream
-# testing from local to remote
-
-print("Hello, this is a test file for the data_test.py script.")
-# Muhammad Ikram Zikrie Bin Rahmat, mir52@uclive.ac.nz
-# I am from Malaysia and I am studying  data science# I am from Malaysia and I am studying  data science
-=======
-# Testing from local to remote
-
-print("Hello, this is a test file for the data_test.py script.")
-
-# Muhammad Ikram Zikrie Bin Rahmat, mir52@uclive.ac.nz
 # I am from Malaysia and I am studying mathematics and statistics
 # I have a cat
 
+=======
+# I am from Malaysia and I am studying  data science
 
->>>>>>> Stashed changes
+#MUHAMMAD AMMAR BIN MOHD SYAIFUDIN, mam425@uclive.ac.nz
+#I am from Malaysia too! I'm studying data science.
+#my branch
+>>>>>>> fdc13975a138d14932e2b435f9bbc8408188d07a
