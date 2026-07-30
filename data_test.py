@@ -10,6 +10,7 @@
 
 # I am from Malaysia and I am studying mathematics and statistics
 # I have a cat
+# I just finished my deliverable 2 on Knime
 
 =======
 # I am from Malaysia and I am studying  data science
