@@ -1,0 +1,23 @@
+These instructions are for Windows
+To set up a virtual environment 
+type the following in the terminal in VSCode (where you have the GitHub repository)
+
+python -m venv .venv
+
+The activate it by typing the following into your terminal 
+
+python -m venv .venv
+
+If successful, you should have (.venv) in green in front of each line in the terminal.
+
+Then you need to pull the requirements.txt file and install it into the virtual environment by typing
+
+pip install -r requirements.txt
+
+This should install all the packages into your virtual environment.
+
+If you install other packages you need to update the requirements.txt file. To do this type
+
+pip freeze > requirements.txt
+
+Then push that file onto GitHub and tell us that it has been updated so that we can install the new packages
