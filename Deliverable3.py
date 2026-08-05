@@ -29,7 +29,11 @@ pd.set_option('display.max_columns', None)
 
 
 # reproduce the price histograms - Iky
+import pandas as pd
+import matplotlib.pyplot as plt
 
+df = pd.read_csv('listings.csv')
+print(df.head())
 
 # reproduce the days since last listing histograms - Ammar
 
