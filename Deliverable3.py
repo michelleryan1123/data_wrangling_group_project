@@ -1,6 +1,7 @@
 # Deliverable 3
 
 import pandas as pd
+pd.set_option('display.max_columns', None)
 
 # load the data - Nathan
 
