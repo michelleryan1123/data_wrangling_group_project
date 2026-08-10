@@ -28,3 +28,22 @@ def load_christchurch(file_name):
     return df
     # Returns the processed Christchurch dataset.
 
+# Calculate summary statistics for a dataframe
+def summary_stats(df):
+
+    summary={
+        "total-count": len(df), #the total number of listings
+        "data_type": df.dtypes, # data type of each column
+        "count_na": df.isna().sum(), # the number of missing values for each column
+        "count_unique": df.nunique(), # the number of unique values for each column
+        "mean": df.mean(numeric_only=True), # the mean for each numeric column
+        "min": df.min(numeric_only=True), # the minimum for each numeric column
+        "max": df.max(numeric_only=True), # the maximum for each numeric column
+        "std_dev": df.std(numeric_only=True), # the standard deviation for each numeric column
+        
+    }
+
+    # convert the dictionary to a dataframe
+    summary = pd.DataFrame(summary)
+
+    return summary
