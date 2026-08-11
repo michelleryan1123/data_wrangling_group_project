@@ -1,7 +1,7 @@
 # Store custom functions to be used in the main notebook here.
 import pandas as pd
 import os
-import glob
+import matplotlib.pyplot as plt
 
 # load the csv datasets, filter to only include Christchurch listings, and add a month_year column
 def load_christchurch(file_name):

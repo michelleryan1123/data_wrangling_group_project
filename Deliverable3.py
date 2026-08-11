@@ -17,50 +17,47 @@ for file in glob.glob("Data/*_listings.csv"): # run through all the files in the
 
 chch_airbnb = pd.concat(chch_data, ignore_index=True) # concatenate all the filtered Christchurch datasets into one dataframe called combined, and reset the index
 
+# save concatenated data
+chch_airbnb.to_csv(
+    "Data\chch_airbnb_oct25_jun26.csv",
+    index=False
+)
 
-# change the format of any columns that need to be changed
-
-# # save concatenated data
-# chch_airbnb.to_csv(
-#     "Data\chch_airbnb_oct25_jun26.csv",
-#     index=False
-# )
-
-
-# Summary stats
+###### Summary stats #######
 
 chch_airbnb_summary = cf.summary_stats(chch_airbnb) # calculate summary stats for the total Chch airbnb dataset
 print(chch_airbnb_summary) # print the summary stats to the console
 
-# reproduce the price histograms - Iky
+######### reproduce the price histograms #########
 
-df = pd.read_csv("christchurch_listings.csv")
+df = pd.read_csv("Data\chch_airbnb_oct25_jun26.csv")
+
 print(df.head())
 
-# remove missing price value - Iky
+# remove missing price values
 price = df["price"].dropna()
 
-# Create histogram of price - Iky
+# Create histogram of price
 plt.hist(price, bins = 50)
 
-plt.xlabel("Price (NZD)")
+plt.xlabel("Price per night (NZD)")
 plt.ylabel("Number of listings")
-plt.title("Distribution of Airbnb Prices in Christchurch - Oct 2025 to Jun 2026")
+plt.title("Distribution of Airbnb Prices in Christchurch\nOct 2025 to Jun 2026")
 plt.show()
 
-# Zoomed histogram to show the majority of listings more clearly - Iky
+# Zoomed histogram (below $1000 per night) to show the majority of listings more clearly
+price_below1000 = price[price <= 1000]
+plt.hist(price_below1000, bins = 50)
 
-plt.hist(price, bins = 50)
-
-plt.xlabel("Price (NZD)")
+plt.xlabel("Price per night (NZD)")
 plt.ylabel("Number of listings")
-plt.title("Distribution of Airbnb Prices in Christchurch - Oct 2025 to Jun 2026")
+plt.title("Distribution of Airbnb Prices below $1000 per night in Christchurch\nOct 2025 to Jun 2026")
 
 # set the x-axis limits to zoom in on the majority of listings
 plt.xlim(0, 1000) 
 plt.show()
 
-# reproduce the days since last review histograms - Ammar
+######### reproduce the days since last review histograms #########
 
 print("Dataset shape:", df.shape)
 
@@ -75,6 +72,7 @@ print(df[["month_year", "last_review"]].head(20))
 
 #convert last_review from text to datetime
 df["last_review"] = pd.to_datetime(df["last_review"],
+                                #    format="%Y/%m/%d",
                                    errors="coerce")
 
 print(df[["month_year", "last_review"]].head(20))
@@ -132,7 +130,8 @@ plt.title(
 plt.tight_layout()
 plt.show()
 
-#Histogran 2
+#Histogram 2
+
 #Distribution for the past 750 days
 review_750 = review_data[
     review_data["days_since_last_review"] <= 750
@@ -154,7 +153,7 @@ plt.title(
 plt.tight_layout()
 plt.show()
 
-# summary stats for the top 10% of listings (based on number reviews)
+######### summary stats for the top 10% of listings (based on number reviews) #########
 top10per, top10_summary = cf.highest_reviews(chch_airbnb) # calculate summary stats for the top 10% of listings based on number_of_reviews
 print(top10_summary) # print the summary stats to the console
 print(top10per.head()) # print the first 5 rows of the top 10% of listings to the console
