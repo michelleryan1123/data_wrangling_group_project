@@ -60,8 +60,99 @@ plt.title("Distribution of Airbnb Prices in Christchurch - Oct 2025 to Jun 2026"
 plt.xlim(0, 1000) 
 plt.show()
 
-# reproduce the days since last listing histograms - Ammar
+# reproduce the days since last review histograms - Ammar
 
+print("Dataset shape:", df.shape)
+
+print("\nColumns:")
+print(df.columns.to_list())
+
+print("\nMonth/year groups:")
+print(df["month_year"].value_counts())
+
+print("\nLast review examples:")
+print(df[["month_year", "last_review"]].head(20))
+
+#convert last_review from text to datetime
+df["last_review"] = pd.to_datetime(df["last_review"],
+                                   errors="coerce")
+
+print(df[["month_year", "last_review"]].head(20))
+print("\nMissing last_review values:", df["last_review"].isna().sum())
+
+#Calculate days since last review
+reference_date = pd.Timestamp("2026-06-22")
+
+df["days_since_last_review"] = (
+    reference_date - df["last_review"]
+).dt.days
+
+#check the calculation
+print("\nDays since last review examples:")
+
+print(
+    df[
+        [
+            "last_review",
+            "days_since_last_review"
+        ]
+        ].head(20)
+)
+
+#remove listings with no last review
+review_data = df.dropna(
+    subset=["days_since_last_review"]
+).copy()
+
+print(
+    "\nListings with a valid last review:",
+    len(review_data)
+)
+
+#Histogram 1
+#Distribution up to 5000 days
+
+review_5000 = review_data[
+    review_data["days_since_last_review"] <= 5000
+]
+
+plt.figure(figsize=(10, 6))
+
+plt.hist(
+    review_5000["days_since_last_review"],
+    bins=100
+)
+
+plt.xlabel("Days since last review")
+plt.ylabel("Number of listings")
+plt.title(
+    "Distribution of Days Since Last Review"
+)
+
+plt.tight_layout()
+plt.show()
+
+#Histogran 2
+#Distribution for the past 750 days
+review_750 = review_data[
+    review_data["days_since_last_review"] <= 750
+]
+
+plt.figure(figsize=(10, 6))
+
+plt.hist(
+    review_750["days_since_last_review"],
+    bins=50
+)
+
+plt.xlabel("Days since last review")
+plt.ylabel("Number of listings")
+plt.title(
+    "Distribution of Days Since Last Review - Past 750 Days"
+)
+
+plt.tight_layout()
+plt.show()
 
 # summary stats for the top 10% of listings (based on number reviews)
 top10per, top10_summary = cf.highest_reviews(chch_airbnb) # calculate summary stats for the top 10% of listings based on number_of_reviews
