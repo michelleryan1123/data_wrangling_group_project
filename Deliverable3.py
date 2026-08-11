@@ -48,6 +48,17 @@ plt.ylabel("Number of listings")
 plt.title("Distribution of Airbnb Prices in Christchurch - Oct 2025 to Jun 2026")
 plt.show()
 
+# Zoomed histogram to show the majority of listings more clearly - Iky
+
+plt.hist(price, bins = 50)
+
+plt.xlabel("Price (NZD)")
+plt.ylabel("Number of listings")
+plt.title("Distribution of Airbnb Prices in Christchurch - Oct 2025 to Jun 2026")
+
+# set the x-axis limits to zoom in on the majority of listings
+plt.xlim(0, 1000) 
+plt.show()
 
 # reproduce the days since last listing histograms - Ammar
 
