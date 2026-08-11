@@ -41,4 +41,7 @@ print(df.head())
 # reproduce the days since last listing histograms - Ammar
 
 
-# filter out top 10% and calculate # in CHCH - Michelle
+# summary stats for the top 10% of listings (based on number reviews)
+top10per, top10_summary = cf.highest_reviews(chch_airbnb) # calculate summary stats for the top 10% of listings based on number_of_reviews
+print(top10_summary) # print the summary stats to the console
+print(top10per.head()) # print the first 5 rows of the top 10% of listings to the console

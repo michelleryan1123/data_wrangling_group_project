@@ -47,3 +47,16 @@ def summary_stats(df):
     summary = pd.DataFrame(summary)
 
     return summary
+
+# filter out the top 10% of listings based on number_of_reviews and calculate some summary statistics
+def highest_reviews(df):
+    # calculate the 90th percentile of number_of_reviews
+    threshold = df["number_of_reviews"].quantile(0.9)
+
+    # filter out the top 10% of listings based on number_of_reviews
+    top10per = df[df["number_of_reviews"] <= threshold]
+
+    # calculate summary statistics for the filtered dataframe
+    summary = summary_stats(top10per)
+
+    return summary, top10per
