@@ -3,7 +3,7 @@
 import pandas as pd
 pd.set_option('display.max_columns', None)
 import glob
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 
 from utils import custom_functions as cf # import the custom functions from the utils folder
 
@@ -34,9 +34,20 @@ print(chch_airbnb_summary) # print the summary stats to the console
 
 # reproduce the price histograms - Iky
 
-
-df = pd.read_csv("Data\chch_airbnb_oct25_jun26.csv")
+df = pd.read_csv("christchurch_listings.csv")
 print(df.head())
+
+# remove missing price value - Iky
+price = df["price"].dropna()
+
+# Create histogram of price - Iky
+plt.hist(price, bins = 50)
+
+plt.xlabel("Price (NZD)")
+plt.ylabel("Number of listings")
+plt.title("Distribution of Airbnb Prices in Christchurch - Oct 2025 to Jun 2026")
+plt.show()
+
 
 # reproduce the days since last listing histograms - Ammar
 
