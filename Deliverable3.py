@@ -252,6 +252,10 @@ plt.subplots_adjust(hspace=0.5)
 plt.show()
 
 ######### summary stats for the top 10% of listings (based on number reviews) #########
+print("LOOK HERE")
 top10per, top10_summary = cf.highest_reviews(chch_airbnb) # calculate summary stats for the top 10% of listings based on number_of_reviews
 print(top10_summary) # print the summary stats to the console
-print(top10per.head()) # print the first 5 rows of the top 10% of listings to the console
+#print(top10per.head()) # print the first 5 rows of the top 10% of listings to the console
+
+# print whole dataset summary stats again
+#print(chch_airbnb_summary) # print the summary stats to the console
