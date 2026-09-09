@@ -9,6 +9,7 @@ from utils import custom_functions as cf # import the custom functions from the 
 
 # import the airbnb dataset
 airbnb_chch = pd.read_csv("Data\\airbnb_oct25_jun26.csv")
+print(airbnb_chch.head()) # print the first 5 rows of the dataset to the console
 
 pre_clean_size = airbnb_chch.shape # number of rows, cols before cleaning
 print(pre_clean_size)
