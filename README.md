@@ -2,7 +2,7 @@
 
 Repository for our DATA201/422 Christchurch Rental Market group project.
 
-## Dataset Source
+## Dataset Source - AirBNB
 
 For Deliverable 2, we use the `listings.csv` dataset provided by Inside Airbnb.
 
@@ -46,3 +46,51 @@ The dataset contains summary information about Airbnb listings across New Zealan
 - Some values of `price` are missing.
 - The `license` column contains no values in the downloaded dataset.
 - `availability_365` does not necessarily mean that the property was unbooked. A host may also manually block dates.
+
+## Cleaning Airbnb Data
+- initial dataset has 28795 entries and 19 columns
+- keep only the following columns: `'id', 'neighbourhood', 'latitude', 'longitude', 'price', 'month_year', 'room_type'`
+    `id` - property id
+    `neighbourhood` - local area
+    `latitude, longitude` - property location
+    `price` per night ($)
+    `month_year` Oct 25 - April 26
+    `room_type` - room, whole house etc
+    - kept these ones, rather than dropping others as 
+        1. most of the other columns were not relevant for future analysis
+        2. means that if new columns were added to the dataset that they wouldn't need to be cleaned in order for the dataset to work properly
+        3. fewer columns to clean - reduces any risk of records being ignored during analysis if not cleaned properly and in some cases it would be difficult/impossible to resolve missing values without possibly introducing bias that doesn't need to exist
+
+### Duplicates
+As the dataset spans multiple months and each property can appear in each month we created a key based on property 'id' and 'month_year' to check for duplicates
+- 0 duplicates found
+
+### Missing values
+'price' had 10667 missing values (37% of the total number of rows) so need to impute them
+
+- 1. Check if there are any properties with no prices
+    (assume that no price means that property was not available to rent)
+
+    163 (0.57%) properties had no prices listed for all months - these were removed
+
+- 2. Check percentage of missing prices per month 
+|APR26  |    5.39 |
+|DEC25  |  100.00 |
+|FEB26  |  100.00|
+|JAN26  |  100.00|
+|JUN26  |   5.95 |
+|MAR26  |    4.32|
+|MAY26  |    5.63|
+|NOV25  |    4.93|
+|OCT25  |    3.26|
+
+    - replace the missing values in those months with the `mean` price for that property for the months where it has a price
+
+    This resolves the remaining missing prices
+### Outliers
+
+
+
+## Dataset - Tenancy bonds
+
+
