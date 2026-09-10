@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from utils import custom_functions as cf # import the custom functions from the utils folder
 
 # import the airbnb dataset
-airbnb_chch = pd.read_csv("Data/airbnb_oct25_jun26.csv")
+airbnb_chch = pd.read_csv("Data\\chch_airbnb_oct25_jun26.csv")
 
 pre_clean_size = airbnb_chch.shape # number of rows, cols before cleaning
 print(pre_clean_size)
