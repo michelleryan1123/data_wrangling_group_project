@@ -76,6 +76,8 @@ As the dataset spans multiple months and each property can appear in each month 
 - 2. Check percentage of missing prices per month
      - replace the missing values in those months with the `mean` price for that property for the months where it has a price
 
+|Month _ Year | % missing|
+|---|---|
 |APR26  |    5.39 |
 |DEC25  |  100.00 |
 |FEB26  |  100.00|
