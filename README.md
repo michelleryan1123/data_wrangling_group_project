@@ -73,7 +73,9 @@ As the dataset spans multiple months and each property can appear in each month 
 
     163 (0.57%) properties had no prices listed for all months - these were removed
 
-- 2. Check percentage of missing prices per month 
+- 2. Check percentage of missing prices per month
+     - replace the missing values in those months with the `mean` price for that property for the months where it has a price
+
 |APR26  |    5.39 |
 |DEC25  |  100.00 |
 |FEB26  |  100.00|
@@ -84,9 +86,7 @@ As the dataset spans multiple months and each property can appear in each month 
 |NOV25  |    4.93|
 |OCT25  |    3.26|
 
-    - replace the missing values in those months with the `mean` price for that property for the months where it has a price
-
-    This resolves the remaining missing prices
+This resolves the remaining missing prices
 ### Outliers
 
 
