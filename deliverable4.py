@@ -4,6 +4,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from pathlib import Path
 
 from utils import custom_functions as cf # import the custom functions from the utils folder
 
@@ -81,3 +82,439 @@ print(missing_by_month)
 
 ##### save the cleaned data ##########
 airbnb_cleaned.to_csv("Data/airbnb_cleaned_oct25_jun26.csv", index=False) # save as a csv file in the Data folder without adding a new index column
+
+
+##### Clean tenancy bond data ####
+
+#Load the quarterly Tenancy Services dataset.
+tenancy_path = Path("Data") / "Detailed-Quarterly-Tenancy-Q1-2020-Q3-2026.csv"
+tenancy = pd.read_csv(tenancy_path)
+
+print("\n=============== RAW TENANCY DATA ===============")
+print("Shape:", tenancy.shape)
+print("\nColumns:")
+print(tenancy.columns.tolist())
+
+print("\nMissing values:")
+print(tenancy.isna().sum())
+
+#Convert Timeframe to Datetime
+tenancy['TimeFrame'] = pd.to_datetime(tenancy['TimeFrame'], format='%Y-%m-%d', errors='coerce')
+print("\nAvailable Tenancy timeframes:")
+print(
+    tenancy["TimeFrame"]
+    .drop_duplicates()
+    .sort_values()
+)
+
+#Filter to airbnb timeframe
+######## filter tenancy data to match Airbnb timeframe ########
+
+# Airbnb data covers October 2025 to June 2026
+start_date = pd.Timestamp("2025-10-01")
+end_date = pd.Timestamp("2026-06-30")
+
+tenancy_filtered = tenancy[
+    tenancy["TimeFrame"].between(start_date, end_date)
+].copy()
+
+print("\n============= FILTERED TIMEFRAME ==========")
+
+print("Shape after timeframe filtering:")
+print(tenancy_filtered.shape)
+
+print("\nTimeframes retained:")
+print(
+    tenancy_filtered["TimeFrame"]
+    .value_counts()
+    .sort_index()
+)
+
+######## inspect missing values after timeframe filtering ########
+
+print("\n============= MISSING VALUES AFTER FILTERING ==========")
+
+print(
+    tenancy_filtered.isna().sum()
+)
+
+print("\nPercentage missing:")
+
+print(
+    tenancy_filtered.isna().mean() * 100
+)
+
+######## inspect rows with missing Location Id ########
+
+missing_location = tenancy_filtered[
+    tenancy_filtered["Location Id"].isna()
+]
+
+print("\n============= MISSING LOCATION ROWS ==========")
+
+print(
+    missing_location[
+        [
+            "TimeFrame",
+            "Location Id",
+            "Dwelling Type",
+            "Number Of Beds",
+            "Total Bonds",
+            "Median Rent",
+            "Geometric Mean Rent",
+            "Upper Quartile Rent",
+            "Lower Quartile Rent"
+        ]
+    ].head(20)
+)
+
+print(
+    "\nNumber of rows with missing Location Id:",
+    len(missing_location)
+)
+
+######## remove rows with missing Location Id ########
+
+rows_before_location_clean = len(tenancy_filtered)
+
+tenancy_cleaned = tenancy_filtered[
+    tenancy_filtered["Location Id"].notna()
+].copy()
+
+rows_after_location_clean = len(tenancy_cleaned)
+
+rows_removed_missing_location = (
+    rows_before_location_clean
+    - rows_after_location_clean
+)
+
+print("\n============= REMOVE MISSING LOCATION ID ==========")
+
+print("Rows before:", rows_before_location_clean)
+print("Rows removed:", rows_removed_missing_location)
+print("Rows remaining:", rows_after_location_clean)
+
+######## investigate special Location Id values ########
+
+minus99_rows = tenancy_cleaned[
+    tenancy_cleaned["Location Id"] == -99
+]
+
+print("\n============= LOCATION ID = -99 ==========")
+
+print("Number of rows:", len(minus99_rows))
+
+print(
+    minus99_rows[
+        [
+            "TimeFrame",
+            "Location Id",
+            "Dwelling Type",
+            "Number Of Beds",
+            "Total Bonds",
+            "Active Bonds",
+            "Median Rent"
+        ]
+    ].head(20)
+)
+
+######## remove aggregate Location Id = -99 ########
+
+rows_before_aggregate_removal = len(tenancy_cleaned)
+
+tenancy_cleaned = tenancy_cleaned[
+    tenancy_cleaned["Location Id"] != -99
+].copy()
+
+rows_after_aggregate_removal = len(tenancy_cleaned)
+
+rows_removed_aggregate = (
+    rows_before_aggregate_removal
+    - rows_after_aggregate_removal
+)
+
+print("\n============= REMOVE LOCATION ID = -99 ==========")
+
+print("Rows before:", rows_before_aggregate_removal)
+print("Rows removed:", rows_removed_aggregate)
+print("Rows remaining:", rows_after_aggregate_removal)
+
+######## correct Location Id datatype ########
+
+tenancy_cleaned["Location Id"] = (
+    tenancy_cleaned["Location Id"]
+    .astype("int64")
+)
+
+print("\nLocation Id datatype:")
+print(tenancy_cleaned["Location Id"].dtype)
+
+print("\nExample Location Id values:")
+print(
+    tenancy_cleaned["Location Id"]
+    .head(10)
+)
+
+######## investigate Number Of Beds ########
+
+print("\n============= NUMBER OF BEDS ==========")
+
+print("Missing Number Of Beds:")
+print(
+    tenancy_cleaned["Number Of Beds"]
+    .isna()
+    .sum()
+)
+
+print("\nNumber Of Beds categories:")
+print(
+    tenancy_cleaned["Number Of Beds"]
+    .value_counts(dropna=False)
+)
+missing_bedrooms = tenancy_cleaned[
+    tenancy_cleaned["Number Of Beds"].isna()
+]
+
+print("\nExample rows with missing Number Of Beds:")
+
+print(
+    missing_bedrooms[
+        [
+            "TimeFrame",
+            "Location Id",
+            "Dwelling Type",
+            "Number Of Beds",
+            "Total Bonds",
+            "Active Bonds",
+            "Median Rent"
+        ]
+    ].head(20)
+)
+print("\nMissing bedrooms by dwelling type:")
+
+print(
+    missing_bedrooms["Dwelling Type"]
+    .value_counts()
+)
+
+######## handle missing Number Of Beds ########
+
+tenancy_cleaned["Number Of Beds"] = (
+    tenancy_cleaned["Number Of Beds"]
+    .astype("string")
+    .fillna("Unknown")
+)
+
+print("\n============= NUMBER OF BEDS AFTER CLEANING ==========")
+
+print(
+    tenancy_cleaned["Number Of Beds"]
+    .value_counts(dropna=False)
+)
+
+print(
+    "\nMissing Number Of Beds after cleaning:",
+    tenancy_cleaned["Number Of Beds"].isna().sum()
+)
+
+######## standardise categorical columns ########
+
+tenancy_cleaned["Dwelling Type"] = (
+    tenancy_cleaned["Dwelling Type"]
+    .astype("string")
+    .str.strip()
+)
+
+tenancy_cleaned["Number Of Beds"] = (
+    tenancy_cleaned["Number Of Beds"]
+    .str.strip()
+)
+
+print("\nDwelling Type categories:")
+
+print(
+    tenancy_cleaned["Dwelling Type"]
+    .value_counts()
+)
+
+print("\nNumber Of Beds categories:")
+
+print(
+    tenancy_cleaned["Number Of Beds"]
+    .value_counts()
+)
+
+######## check duplicate tenancy records ########
+
+tenancy_key = [
+    "TimeFrame",
+    "Location Id",
+    "Dwelling Type",
+    "Number Of Beds"
+]
+
+duplicate_tenancy = tenancy_cleaned.duplicated(
+    subset=tenancy_key,
+    keep=False
+)
+
+print("\n============= DUPLICATE CHECK ==========")
+
+print(
+    "Number of duplicate key rows:",
+    duplicate_tenancy.sum()
+)
+
+######## sanity checks for bond counts ########
+
+print("\n============= BOND COUNT SANITY CHECKS ==========")
+
+bond_count_columns = [
+    "Total Bonds",
+    "Active Bonds",
+    "Closed Bonds"
+]
+
+for column in bond_count_columns:
+    negative_count = (
+        tenancy_cleaned[column] < 0
+    ).sum()
+
+    print(
+        f"{column}: {negative_count} negative values"
+    )
+
+######## sanity checks for rent values ########
+
+print("\n============= RENT SANITY CHECKS ==========")
+
+rent_columns = [
+    "Median Rent",
+    "Geometric Mean Rent",
+    "Upper Quartile Rent",
+    "Lower Quartile Rent"
+]
+
+for column in rent_columns:
+    non_positive = (
+        tenancy_cleaned[column] <= 0
+    ).sum()
+
+    print(
+        f"{column}: {non_positive} non-positive values"
+    )
+
+lower_above_median = (
+    tenancy_cleaned["Lower Quartile Rent"]
+    > tenancy_cleaned["Median Rent"]
+).sum()
+
+median_above_upper = (
+    tenancy_cleaned["Median Rent"]
+    > tenancy_cleaned["Upper Quartile Rent"]
+).sum()
+
+print(
+    "\nRows where Lower Quartile Rent > Median Rent:",
+    lower_above_median
+)
+
+print(
+    "Rows where Median Rent > Upper Quartile Rent:",
+    median_above_upper
+)
+
+######## investigate possible rent outliers ########
+
+print("\n============= MEDIAN RENT SUMMARY ==========")
+
+print(
+    tenancy_cleaned["Median Rent"].describe()
+)
+
+print("\nHighest 10 median rents:")
+
+print(
+    tenancy_cleaned.nlargest(
+        10,
+        "Median Rent"
+    )[
+        [
+            "TimeFrame",
+            "Location Id",
+            "Dwelling Type",
+            "Number Of Beds",
+            "Total Bonds",
+            "Active Bonds",
+            "Median Rent"
+        ]
+    ]
+)
+
+print("\nLowest 10 median rents:")
+
+print(
+    tenancy_cleaned.nsmallest(
+        10,
+        "Median Rent"
+    )[
+        [
+            "TimeFrame",
+            "Location Id",
+            "Dwelling Type",
+            "Number Of Beds",
+            "Total Bonds",
+            "Active Bonds",
+            "Median Rent"
+        ]
+    ]
+)
+
+######## check Log Std Dev Weekly Rent ########
+
+print("\n============= LOG STD DEV CHECK ==========")
+
+print(
+    "Negative values:",
+    (tenancy_cleaned["Log Std Dev Weekly Rent"] < 0).sum()
+)
+
+print(
+    "Minimum:",
+    tenancy_cleaned["Log Std Dev Weekly Rent"].min()
+)
+
+print(
+    "Maximum:",
+    tenancy_cleaned["Log Std Dev Weekly Rent"].max()
+)
+
+######## final missing value check ########
+
+print("\n============= FINAL MISSING VALUES ==========")
+
+print(
+    tenancy_cleaned.isna().sum()
+)
+
+print("\n============= FINAL TENANCY DATA ==========")
+
+print("Final shape:")
+print(tenancy_cleaned.shape)
+
+print("\nFinal data types:")
+print(tenancy_cleaned.dtypes)
+
+print("\nFirst five rows:")
+print(tenancy_cleaned.head())
+
+######## save cleaned tenancy dataset ########
+
+tenancy_cleaned.to_csv(
+    "Data/tenancy_cleaned_oct25_jun26.csv",
+    index=False
+)
+
+print(
+    "\nCleaned tenancy dataset saved successfully."
+)
