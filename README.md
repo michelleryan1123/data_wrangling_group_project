@@ -7,6 +7,8 @@ Repository for our DATA201/422 Christchurch Rental Market group project.
 For Deliverable 4, we use the combined Christchurch Airbnb dataset created in
 Deliverable 3.
 
+- **Source:** Inside Airbnb
+- **Website:** [https://insideairbnb.com/get-the-data/]
 - **Dataset:** `chch_airbnb_oct25_jun26.csv`
 - **Location:** Christchurch City, New Zealand
 - **Study period:** October 2025 to June 2026
