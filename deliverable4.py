@@ -1,51 +1,75 @@
-## Deliverable 4: cleaning the datasets
+# ======================================
+# Deliverable 4: Cleaning The Datasets
+# ======================================
 
-#import the required libraries
+# Import the required libraries
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from pathlib import Path
 
-from utils import custom_functions as cf # import the custom functions from the utils folder
+# Import the custom functions from the utils folder
+from utils import custom_functions as cf 
 
-# import the airbnb dataset
+# ============================================================
+# Airbnb Data: Load and Initial Inspection
+# ============================================================
+
+# Load the combined Christchurch Airbnb dataset
 airbnb_chch = pd.read_csv("Data\\chch_airbnb_oct25_jun26.csv")
 
-pre_clean_size = airbnb_chch.shape # number of rows, cols before cleaning
+# Record the dataset size before cleaning
+pre_clean_size = airbnb_chch.shape # Number of rows, cols before cleaning
+print("\nAirbnb dataset shape before cleaning:")
 print(pre_clean_size)
 
-col_names = airbnb_chch.columns # get the column names
+# Display column names
+col_names = airbnb_chch.columns # Get the column names
 print(col_names)
 
-#summary statistics for the dataset before cleaning
-summary_all = cf.summary_stats(airbnb_chch) # calculate summary stats for the filtered
+# Summary statistics for the dataset before cleaning
+print("\nAirbnb summary statistics before cleaning:")
+summary_all = cf.summary_stats(airbnb_chch) # Calculate summary stats for the filtered
 print(summary_all)
 
-# define the columns to keep for the cleaned dataset
+# ============================================================
+# Airbnb Data: Select Relevant Columns
+# ============================================================
+
+# Define the columns to keep for the cleaned dataset
 col_to_keep = ['id', 'neighbourhood', 'latitude', 'longitude', 'price', 'month_year', 'room_type']
 
-airbnb_cleaned = airbnb_chch[col_to_keep].copy() # create a new dataframe with only the columns to keep
-airbnb_filtered = airbnb_cleaned.shape # number of rows, cols after filtering to keep only the columns we want
+airbnb_cleaned = airbnb_chch[col_to_keep].copy() # Create a new dataframe with only the columns to keep
+airbnb_filtered = airbnb_cleaned.shape # Number of rows, cols after filtering to keep only the columns we want
 print(airbnb_filtered)
 
-# look at the strucutre of the filtered dataset
-print(airbnb_cleaned.info()) # print the structure of the filtered dataset
+# Look at the strucutre of the filtered dataset
+# Print the structure of the filtered dataset
+print(airbnb_cleaned.info())
 
-#get some summary statistics for the filtered dataset
-summary_stats = cf.summary_stats(airbnb_cleaned) # calculate summary stats for the filtered
+# Get some summary statistics for the filtered dataset
+print("\nAirbnb summary statistics after selecting columns:")
+summary_stats = cf.summary_stats(airbnb_cleaned)
 print(summary_stats)
 
-######## check for duplicates in the dataset ##############
-# as dataset spans multiple months we can't just use property id to check for duplicates, we need to use a combination of property id and month_year
-duplicates = airbnb_cleaned.duplicated(subset=['id', 'month_year'], keep= False) # check for duplicate rows based on property id and month_year
+# ============================================================
+# Airbnb Data: Duplicate Check
+# ============================================================
+
+# Check for duplicates in the dataset 
+# As dataset spans multiple months we can't just use property id to check for duplicates, we need to use a combination of property id and month_year
+duplicates = airbnb_cleaned.duplicated(subset=['id', 'month_year'], keep= False) # Check for duplicate rows based on property id and month_year
 print(f"Number of duplicates found: {duplicates.sum()}")
 
-# no duplicates found
+# No duplicates found
 
-####### missing values ##########
-# there are 10667 missing values in the 'price' column
+# ============================================================
+# Airbnb Data: Missing Price Values
+# ============================================================
 
-# check for properties that have no price at all
+# There are 10667 missing values in the 'price' column
+
+# Check for properties that have no price at all
 missing_by_id = (airbnb_cleaned
     .groupby("id")["price"] # group by property id and get the price column
     .apply(lambda x: x.isna().all()) # check if all the prices for that property id are missing - returns true if all prices are missing, false otherwise
@@ -54,14 +78,14 @@ missing_by_id = (airbnb_cleaned
 missing_by_id = missing_by_id[missing_by_id] # filter to only 'True' values (all missing prices)
 print("sum of properties with all missing prices: ", missing_by_id.sum())
 
-# drop the properties that have no prices for all months
+# Drop the properties that have no prices for all months
 airbnb_cleaned = airbnb_cleaned[~airbnb_cleaned["id"].isin(missing_by_id.index)]
 
-# check number of missing prices per month
+# Check number of missing prices per month
 missing_by_month =airbnb_cleaned.groupby("month_year")["price"].apply(lambda x: x.isna().mean()*100)
 print(missing_by_month)
 
-# replace the empty months with the mean price of the other months for that propery
+# Impute missing prices using the mean observed price for each property
 mean_price_per_id = (
     airbnb_cleaned
     .groupby("id")["price"] # group by property id and get the price column
@@ -194,6 +218,10 @@ print(
     tenancy["TimeFrame"]
     .drop_duplicates()
     .sort_values()
+tenancy['TimeFrame'] = pd.to_datetime(
+    tenancy['TimeFrame'],
+    format='%d/%m/%Y',
+    errors='coerce'
 )
 
 #Filter to airbnb timeframe
@@ -307,7 +335,7 @@ print(
     ].head(20)
 )
 
-######## remove aggregate Location Id = -99 ########
+######## Remove Special Location Id = -99 ########
 
 rows_before_aggregate_removal = len(tenancy_cleaned)
 
@@ -607,5 +635,3 @@ tenancy_cleaned.to_csv(
 print(
     "\nCleaned tenancy dataset saved successfully."
 )
-
-
