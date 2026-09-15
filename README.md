@@ -2,6 +2,152 @@
 
 Repository for our DATA201/422 Christchurch Rental Market group project.
 
+## Dataset Source - Airbnb
+
+For Deliverable 4, we use the combined Christchurch Airbnb dataset created in
+Deliverable 3.
+
+- **Dataset:** `chch_airbnb_oct25_jun26.csv`
+- **Location:** Christchurch City, New Zealand
+- **Study period:** October 2025 to June 2026
+- **Format:** CSV
+- **Number of observations before cleaning:** 28,795
+- **Number of variables before cleaning:** 19
+
+The dataset contains monthly Airbnb listing information for Christchurch,
+including listing identifiers, neighbourhoods, geographic coordinates, room
+types, prices, availability, and review information.
+
+
+## Cleaning Airbnb Data
+
+For Deliverable 4, the combined Christchurch Airbnb dataset was cleaned and
+reduced to the variables required for the later rental-market analysis.
+
+The following columns were retained:
+
+| Column | Meaning |
+| --- | --- |
+| `id` | Unique Airbnb listing identifier |
+| `neighbourhood` | Christchurch neighbourhood or ward |
+| `latitude` | Latitude of the Airbnb listing |
+| `longitude` | Longitude of the Airbnb listing |
+| `price` | Nightly Airbnb listing price |
+| `month_year` | Month and year associated with the monthly dataset |
+| `room_type` | Type of Airbnb accommodation |
+
+Latitude and longitude were retained so listings could still be geographically
+identified and used in later spatial or location-based analysis.
+
+
+### Duplicates
+
+Because the dataset contains repeated observations of Airbnb listings across
+different months, listing `id` alone cannot be used to identify duplicates.
+
+Duplicates were therefore checked using the combination:
+
+`id + month_year`
+
+This identifies whether the same listing appears more than once within the same
+monthly dataset.
+
+No duplicate listing-month combinations were found.
+
+
+### Missing Price Values
+
+Before cleaning, the `price` column contained 10,667 missing values.
+
+Properties were first grouped by listing `id` to identify listings where price
+was missing for every observed month.
+
+A total of 163 properties had no observed price in any month. These properties
+were removed because there was no observed price information available that
+could be used to estimate their missing values.
+
+This removed 497 rows from the dataset, reducing the Airbnb dataset from 28,795
+to 28,298 rows.
+
+For the remaining listings, missing prices were imputed using the mean observed
+price for the same property across the other available months.
+
+This approach retains listings that contain some valid price information while
+avoiding the use of an overall dataset-wide mean that would ignore differences
+between individual properties.
+
+After imputation, there were no remaining missing values in the `price` column.
+
+A limitation of this approach is that an imputed value represents an estimate
+rather than an observed nightly price. It may therefore reduce real month-to-month
+price variation for listings with missing observations.
+
+
+### Outliers and Sanity Checks
+
+Airbnb nightly prices were inspected for possible outliers using summary
+statistics, quantiles, the highest-price observations, threshold counts, and a
+boxplot.
+
+The cleaned Airbnb price data had:
+
+- Median nightly price: `$206`
+- 90th percentile: `$401`
+- 95th percentile: `$505`
+- 99th percentile: `$925.75`
+- Maximum nightly price: `$43,654`
+
+There were:
+
+- 219 observations above `$1,000`
+- 38 observations above `$2,000`
+- 16 observations above `$5,000`
+- 9 observations above `$10,000`
+
+The highest prices were inspected together with listing ID, month, room type,
+neighbourhood, latitude, and longitude.
+
+Although some prices were extremely high compared with the majority of
+listings, they were not automatically removed. An extreme value does not
+necessarily indicate a data error, and there was insufficient evidence to
+classify these observations as invalid.
+
+Additional sanity checks found:
+
+- 0 non-positive price values
+- 0 missing latitude values
+- 0 missing longitude values
+
+The extreme values were therefore retained in the cleaned dataset, but should
+be considered when interpreting Airbnb price summaries and visualisations.
+
+
+### Final Cleaned Airbnb Dataset
+
+The final cleaned Airbnb dataset contains:
+
+- **28,298 rows**
+- **7 variables**
+
+The cleaned dataset is saved locally as:
+
+`Data/airbnb_cleaned_oct25_jun26.csv`
+
+The cleaned dataset will be used in later analysis to compare short-term Airbnb
+prices with long-term rental-market information from the Tenancy Services data.
+
+
+### Airbnb Data Limitation to Verify
+
+The current combined dataset contains the `month_year` labels `OCT26`, `NOV26`,
+and `DEC26`, even though the intended study period begins in October 2025.
+
+These labels appear inconsistent with the intended October 2025 to June 2026
+study period and should be checked against the original Deliverable 3 monthly
+files before the final analysis. If confirmed as a labelling error, the labels
+should be corrected reproducibly in the data-processing code rather than by
+manually editing the CSV.
+
 ## Dataset Source - Tenancy Services
 
 For Deliverable 4, we use the `Detailed-Quarterly-Tenancy-Q1-2020-Q3-2026.csv` dataset provided by TenancyServices website.
@@ -96,7 +242,7 @@ Duplicates were checked using the combination:
 
 No duplicate key combinations were found.
 
-#### Sanity checks and outliers
+#### Sanity checks and outliers of Tenancy Data
 
 Bond count variables were checked for negative values and none were found.
 
