@@ -2,98 +2,48 @@
 
 Repository for our DATA201/422 Christchurch Rental Market group project.
 
-## Dataset Source - AirBNB
+## Dataset Source - Tenancy Services
 
-For Deliverable 2, we use the `listings.csv` dataset provided by Inside Airbnb.
+For Deliverable 4, we use the `Detailed-Quarterly-Tenancy-Q1-2020-Q3-2026.csv` dataset provided by TenancyServices website.
 
-- **Source:** Inside Airbnb
-- **Website:** https://insideairbnb.com/get-the-data/
-- **Dataset:** `listings.csv`
+- **Source:** TenancyServices website
+- **Website:** [https://www.tenancy.govt.nz/about-tenancy-services/data-and-statistics/rental-bond-data/]
+- **Dataset:** `Detailed-Quarterly-Tenancy-Q1-2020-Q3-2026.csv`
 - **Location:** New Zealand
-- **Date:** June 2026
+- **Date:** September 2026
 - **Format:** CSV
-- **Number of observations:** 50,932 listings
-- **Number of variables:** 18
+- **Number of observations:** 226080
+- **Number of variables:** 12
 
-The dataset contains summary information about Airbnb listings across New Zealand.
+The dataset contains quarterly summary information about rental bonds across New Zealand, including rental prices, bond activity, dwelling types, bedroom numbers, and geographical locations.
 
 ## Dataset Columns
 
 | Column | Meaning |
 |---|---|
-| `id` | Unique identifier for each Airbnb listing |
-| `name` | Name or title of the Airbnb listing |
-| `host_id` | Unique identifier for the host |
-| `host_name` | Name of the host |
-| `neighbourhood_group` | Larger geographic area containing the listing |
-| `neighbourhood` | Local area or neighbourhood of the listing |
-| `latitude` | Latitude coordinate of the listing |
-| `longitude` | Longitude coordinate of the listing |
-| `room_type` | Type of accommodation, such as entire home, private room, shared room, or hotel room |
-| `price` | Nightly price of the listing in NZD |
-| `minimum_nights` | Minimum number of nights required for a booking |
-| `number_of_reviews` | Total number of reviews received by the listing |
-| `last_review` | Date of the most recent review |
-| `reviews_per_month` | Average number of reviews received per month |
-| `calculated_host_listings_count` | Number of listings belonging to the same host |
-| `availability_365` | Number of days the listing is shown as available during the next 365 days |
-| `number_of_reviews_ltm` | Number of reviews received in the last 12 months |
-| `license` | Licence or registration information, if available |
+| `TimeFrame` | Time period that the rental bond data relates to |
+| `Location Id` | Identifier for the SA2-2019 geographical area |
+| `Dwelling Type` | Type of dwelling associated with the rental bond |
+| `Number Of Beds` | Number of bedrooms in the dwelling |
+| `Total Bonds` | Total number of rental bonds recorded |
+| `Active Bonds` | Number of active rental bonds |
+| `Closed Bonds` | Number of rental bonds that have been closed |
+| `Median Rent` | Median weekly rent |
+| `Geometric Mean Rent` | Geometric mean of weekly rent |
+| `Upper Quartile Rent` | Synthetic upper quartile (75th percentile) of weekly rent |
+| `Lower Quartile Rent` | Synthetic lower quartile (25th percentile) of weekly rent |
+| `Log Std Dev Weekly Rent` | Standard deviation of weekly rent on a logarithmic scale |
 
 ## Data Notes
 
-- Some listings have missing values for `last_review` and `reviews_per_month`.
-- Some values of `price` are missing.
-- The `license` column contains no values in the downloaded dataset.
-- `availability_365` does not necessarily mean that the property was unbooked. A host may also manually block dates.
-
-## Cleaning Airbnb Data
-- initial dataset has 28795 entries and 19 columns
-- keep only the following columns: `'id', 'neighbourhood', 'latitude', 'longitude', 'price', 'month_year', 'room_type'`
-    `id` - property id
-    `neighbourhood` - local area
-    `latitude, longitude` - property location
-    `price` per night ($)
-    `month_year` Oct 25 - April 26
-    `room_type` - room, whole house etc
-    - kept these ones, rather than dropping others as 
-        1. most of the other columns were not relevant for future analysis
-        2. means that if new columns were added to the dataset that they wouldn't need to be cleaned in order for the dataset to work properly
-        3. fewer columns to clean - reduces any risk of records being ignored during analysis if not cleaned properly and in some cases it would be difficult/impossible to resolve missing values without possibly introducing bias that doesn't need to exist
+- Geometric mean (replacing median): Calculated by multiplying the values together and taking the nth root. When rent is log-normally distributed, it closely approximates the median.
+- Synthetic quartiles (replacing quartiles): Estimate the 25th percentile (lower quartile) and 75th percentile (upper quartile), assuming rent is log-normally distributed. The mean and variance are calculated from the data rather than assumed.
+- The type of dwelling, with `ALL` representing all dwelling types combined.
+- `NULL` values indicate missing information for that field.
 
 ### Duplicates
-As the dataset spans multiple months and each property can appear in each month we created a key based on property 'id' and 'month_year' to check for duplicates
-- 0 duplicates found
-
-### Missing values
-'price' had 10667 missing values (37% of the total number of rows) so need to impute them
-
-- 1. Check if there are any properties with no prices
-    (assume that no price means that property was not available to rent)
-
-    163 (0.57%) properties had no prices listed for all months - these were removed
-
-- 2. Check percentage of missing prices per month
-     - replace the missing values in those months with the `mean` price for that property for the months where it has a price
-
-|Month _ Year | % missing|
-|---|---|
-|APR26  |    5.39 |
-|DEC25  |  100.00 |
-|FEB26  |  100.00|
-|JAN26  |  100.00|
-|JUN26  |   5.95 |
-|MAR26  |    4.32|
-|MAY26  |    5.63|
-|NOV25  |    4.93|
-|OCT25  |    3.26|
-
-This resolves the remaining missing prices
-### Outliers
-
-
-
-## Dataset - Tenancy bonds
+Total rows: 226,080
+Duplicate rows: 0
 
 ### Cleaning Tenancy Data
 
