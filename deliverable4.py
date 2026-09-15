@@ -201,6 +201,23 @@ print("\nMissing values:")
 print(tenancy.isna().sum())
 
 #Convert Timeframe to Datetime
+
+print("\nRaw TimeFrame examples:")
+print(tenancy["TimeFrame"].head(20))
+
+print("\nUnique TimeFrame examples:")
+print(
+    tenancy["TimeFrame"]
+    .drop_duplicates()
+    .head(20)
+)
+
+tenancy['TimeFrame'] = pd.to_datetime(tenancy['TimeFrame'], format='%Y-%m-%d', errors='coerce')
+print("\nAvailable Tenancy timeframes:")
+print(
+    tenancy["TimeFrame"]
+    .drop_duplicates()
+    .sort_values()
 tenancy['TimeFrame'] = pd.to_datetime(
     tenancy['TimeFrame'],
     format='%d/%m/%Y',
