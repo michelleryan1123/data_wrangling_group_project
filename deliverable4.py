@@ -212,16 +212,18 @@ print(
     .head(20)
 )
 
-tenancy['TimeFrame'] = pd.to_datetime(tenancy['TimeFrame'], format='%Y-%m-%d', errors='coerce')
+# Convert TimeFrame to datetime
+tenancy["TimeFrame"] = pd.to_datetime(
+    tenancy["TimeFrame"],
+    format="%d/%m/%Y",
+    errors="coerce"
+)
+
 print("\nAvailable Tenancy timeframes:")
 print(
     tenancy["TimeFrame"]
     .drop_duplicates()
     .sort_values()
-tenancy['TimeFrame'] = pd.to_datetime(
-    tenancy['TimeFrame'],
-    format='%d/%m/%Y',
-    errors='coerce'
 )
 
 #Filter to airbnb timeframe
