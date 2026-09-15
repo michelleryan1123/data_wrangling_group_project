@@ -77,6 +77,84 @@ print(missing_by_month)
 
 ######### check for outliers ###########
 
+print("\nPrice summary:")
+print(airbnb_cleaned["price"].describe())
+
+print("\nPrice quantiles:")
+print(
+    airbnb_cleaned["price"].quantile(
+        [0.50, 0.90, 0.95, 0.99, 0.995, 1.00]
+    )
+)
+
+pd.set_option("display.max_columns", None)
+
+print("\n20 highest prices:")
+print(
+    airbnb_cleaned
+    .sort_values("price", ascending=False)
+    [["id", "month_year", "price",
+      "room_type", "neighbourhood",
+      "latitude", "longitude"]]
+    .head(20)
+)
+
+# Count high-price observations
+print("\nRows with price above $1000:")
+print((airbnb_cleaned["price"] > 1000).sum())
+
+print("\nRows with price above $2000:")
+print((airbnb_cleaned["price"] > 2000).sum())
+
+print("\nRows with price above $5000:")
+print((airbnb_cleaned["price"] > 5000).sum())
+
+print("\nRows with price above $10000:")
+print((airbnb_cleaned["price"] > 10000).sum())
+
+
+######### sanity checks ###########
+
+print("\nNon-positive prices:")
+print((airbnb_cleaned["price"] <= 0).sum())
+
+print("\nMissing latitude/longitude:")
+print(
+    airbnb_cleaned[
+        ["latitude", "longitude"]
+    ].isna().sum()
+)
+
+print("\nLatitude range:")
+print(
+    airbnb_cleaned["latitude"].min(),
+    airbnb_cleaned["latitude"].max()
+)
+
+print("\nLongitude range:")
+print(
+    airbnb_cleaned["longitude"].min(),
+    airbnb_cleaned["longitude"].max()
+)
+
+
+######### visual check ###########
+
+plt.figure(figsize=(10, 6))
+
+plt.boxplot(
+    airbnb_cleaned["price"].dropna(),
+    orientation="horizontal"
+)
+
+plt.xlabel("Price per night (NZD)")
+plt.title("Airbnb Price Outlier Check")
+
+plt.tight_layout()
+plt.show()
+
+
+
 
 
 ##### save the cleaned data ##########
