@@ -139,16 +139,29 @@ The cleaned dataset will be used in later analysis to compare short-term Airbnb
 prices with long-term rental-market information from the Tenancy Services data.
 
 
-### Airbnb Data Limitation to Verify
+### Airbnb Month Label Correction
 
-The current combined dataset contains the `month_year` labels `OCT26`, `NOV26`,
-and `DEC26`, even though the intended study period begins in October 2025.
+During Deliverable 4, a month-label inconsistency inherited from Deliverable 3 was identified.
 
-These labels appear inconsistent with the intended October 2025 to June 2026
-study period and should be checked against the original Deliverable 3 monthly
-files before the final analysis. If confirmed as a labelling error, the labels
-should be corrected reproducibly in the data-processing code rather than by
-manually editing the CSV.
+The combined Airbnb dataset contained the labels `OCT26`, `NOV26`, and `DEC26`, even though the intended study period is October 2025 to June 2026.
+
+The Deliverable 3 processing code created the `month_year` value from the monthly dataset filename. The first three files had been labelled with `26`, causing those incorrect labels to be carried into the combined dataset.
+
+The following corrections were therefore applied reproducibly in the Deliverable 4 code:
+
+- `OCT26` → `OCT25`
+- `NOV26` → `NOV25`
+- `DEC26` → `DEC25`
+
+This correction only changed the month-year labels. It did not alter prices, listing IDs, geographic information, or the number of observations.
+
+The corrected study period is therefore October 2025 to June 2026.
+
+An additional limitation was identified in the monthly price data. Before imputation, December 2025, January 2026, and February 2026 had 100% missing values in the `price` column.
+
+As a result, all price values for these three months after cleaning are imputed estimates based on each listing's observed prices in other available months rather than directly observed monthly prices.
+
+This should be considered when interpreting changes in Airbnb prices over time, because the imputation may reduce genuine seasonal or month-to-month variation.
 
 ## Dataset Source - Tenancy Services
 
@@ -215,13 +228,11 @@ rows also had missing rent-summary values.
 
 This reduced the dataset from 27,212 to 27,118 rows.
 
-#### Aggregate location records
+#### Special Location Id Records
 
-127 rows had `Location Id = -99`, representing aggregate location records
-rather than individual geographic areas.
+127 rows had `Location Id = -99`.
 
-These rows were removed so aggregate values would not be mixed with
-location-level observations in later analysis.
+Because `-99` is a special non-standard location identifier rather than an ordinary geographic Location Id, these rows were excluded from the location-level dataset so that special records would not be mixed with ordinary geographic observations.
 
 This reduced the dataset from 27,118 to 26,991 rows.
 
