@@ -85,7 +85,7 @@ rather than an observed nightly price. It may therefore reduce real month-to-mon
 price variation for listings with missing observations.
 
 
-### Outliers and Sanity Checks
+### Outliers Checks
 
 Airbnb nightly prices were inspected for possible outliers using summary
 statistics, quantiles, the highest-price observations, threshold counts, and a
@@ -124,7 +124,7 @@ The extreme values were therefore retained in the cleaned dataset, but should
 be considered when interpreting Airbnb price summaries and visualisations.
 
 
-### Final Cleaned Airbnb Dataset
+### Cleaned Airbnb Dataset
 
 The final cleaned Airbnb dataset contains:
 
