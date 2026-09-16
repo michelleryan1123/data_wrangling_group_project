@@ -18,6 +18,25 @@ from utils import custom_functions as cf
 # Load the combined Christchurch Airbnb dataset
 airbnb_chch = pd.read_csv("Data\\chch_airbnb_oct25_jun26.csv")
 
+# Correct month labels inherited from Deliverable 3
+month_label_corrections = {
+    "OCT26": "OCT25",
+    "NOV26": "NOV25",
+    "DEC26": "DEC25"
+}
+
+airbnb_chch["month_year"] = (
+    airbnb_chch["month_year"]
+    .replace(month_label_corrections)
+)
+
+# Verify corrected month labels
+print("\nAirbnb month/year groups after label correction:")
+print(
+    airbnb_chch["month_year"]
+    .value_counts()
+)
+
 # Record the dataset size before cleaning
 pre_clean_size = airbnb_chch.shape # Number of rows, cols before cleaning
 print("\nAirbnb dataset shape before cleaning:")
