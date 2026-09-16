@@ -82,7 +82,7 @@ After imputation, there were no remaining missing values in the `price` column.
 
 A limitation of this approach is that an imputed value represents an estimate
 rather than an observed nightly price. It may therefore reduce real month-to-month
-price variation for listings with missing observations.
+price variation for listings with missing observations. (e.g. prices may change over the course of the year due to seasonal demand, or newer properties are often priced very cheaply for the first few months they are listed).
 
 
 ### Outliers Checks
@@ -109,10 +109,8 @@ There were:
 The highest prices were inspected together with listing ID, month, room type,
 neighbourhood, latitude, and longitude.
 
-Although some prices were extremely high compared with the majority of
-listings, they were not automatically removed. An extreme value does not
-necessarily indicate a data error, and there was insufficient evidence to
-classify these observations as invalid.
+Prices above $3000 are likely to be errors in the data. A manual check of those properties revealed that they were not on Airbnb, had a different listed price, or the property description did not match the price (e.g. a cottage wouldn't cost $20 000 per night).
+Each listing with a price exceeding $3000 was checked to see if it had other months where the price was less and was replaced with the mean of those, otherwise it was removed from the dataset.
 
 Additional sanity checks found:
 
@@ -128,7 +126,7 @@ be considered when interpreting Airbnb price summaries and visualisations.
 
 The final cleaned Airbnb dataset contains:
 
-- **28,298 rows**
+- **27,266 rows**
 - **7 variables**
 
 The cleaned dataset is saved locally as:
