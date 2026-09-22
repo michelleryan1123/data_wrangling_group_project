@@ -273,3 +273,118 @@ threshold was applied.
 
 The final cleaned Tenancy dataset contains 26,991 rows and 12 columns.
 
+# Deliverable 5 – SA2 Mapping, Data Integration and Christchurch Central Median
+
+## 1. Objective
+
+This section prepares the Airbnb and Tenancy datasets for integration by assigning Statistical Area 2 (SA2) codes to Airbnb listings and joining the datasets using location and time. It also calculates the median Airbnb nightly price in Christchurch Central (Location ID 326600).
+
+The analysis covers October 2025 to June 2026.
+
+## 2. SA2 Mapping
+
+The cleaned Airbnb dataset contains **28,298 observations**, representing **3,796 unique latitude/longitude pairs**.
+
+The Koordinates Query API was initially tested on a single Airbnb coordinate before processing the unique coordinates using the SA2-2026 layer (Layer ID 123515). The mapping results were saved as a checkpoint to avoid repeating completed queries.
+
+All 3,796 coordinates were successfully mapped, with no duplicate coordinates or missing SA2 codes.
+
+The SA2-2026 codes were added to the Airbnb dataset and saved as `Data/airbnb_with_sa2.csv`. The merge preserved all 28,298 original observations.
+
+### Aligning the geographic areas
+
+A comparison with the Tenancy dataset identified differences in SA2 code coverage. An SA2-2019 shapefile was therefore used to generate a second mapping based on the Airbnb coordinates.
+
+The shapefile was loaded using GeoPandas. Airbnb coordinates were converted from EPSG:4326 to EPSG:2193 before a point-in-polygon spatial join.
+
+The SA2-2019 mapping produced:
+
+| Validation             | Result |
+| ---------------------- | -----: |
+| Unique coordinates     |  3,796 |
+| Duplicate coordinates  |      0 |
+| Missing SA2-2019 codes |      0 |
+
+The mapping was saved as `Data/sa2_2019_mapping.csv`.
+
+SA2-2019 codes and area names were subsequently added to the Airbnb dataset and saved as `Data/airbnb_with_sa2_2019.csv`.
+
+Both geographic versions were retained for comparison.
+
+## 3. Joining Airbnb and Tenancy
+
+Airbnb's monthly observations were assigned to the corresponding quarterly Tenancy reference dates:
+
+| Airbnb months         | Quarter    |
+| --------------------- | ---------- |
+| October–December 2025 | 2025-10-01 |
+| January–March 2026    | 2026-01-01 |
+| April–June 2026       | 2026-04-01 |
+
+The Tenancy dataset was filtered to records where both `Dwelling Type` and `Number Of Beds` were `ALL`, selecting overall rental summaries rather than individual dwelling and bedroom categories.
+
+This produced **4,865 Tenancy records**, with no duplicate area-quarter combinations.
+
+A left join was performed using:
+
+* Airbnb `sa2_2019_code` = Tenancy `Location Id`
+* Airbnb `quarter` = Tenancy `TimeFrame`
+
+The join used `validate="many_to_one"` to prevent the Tenancy dataset from duplicating Airbnb observations.
+
+### Join validation
+
+| Result                 | Observations |
+| ---------------------- | -----------: |
+| Original Airbnb rows   |       28,298 |
+| Rows after joining     |       28,298 |
+| Successfully matched   |       24,107 |
+| Unmatched and retained |        4,191 |
+
+All original Airbnb observations were preserved. Unmatched records have missing Tenancy values.
+
+The combined dataset was saved as:
+
+`Data/airbnb_tenancy_joined.csv`
+
+## 4. Christchurch Central Median Airbnb Price
+
+Airbnb records were filtered using Christchurch Central's SA2 code, `326600`.
+
+| Measurement                 |        Result |
+| --------------------------- | ------------: |
+| Listing-month observations  |         1,105 |
+| Unique Airbnb listings      |           152 |
+| Median Airbnb nightly price | **NZ$237.83** |
+
+The median was calculated across listing-month observations covering October 2025 to June 2026.
+
+The Christchurch Central median was also checked using the SA2-2019 mapping and produced the same result.
+
+## 5. Limitations
+
+* Airbnb prices for December 2025, January 2026 and February 2026 were imputed during Deliverable 4. The calculated median therefore includes estimated prices.
+* The SA2-2019 shapefile uses generalised boundaries, which may introduce geographic assignment inaccuracies near area boundaries.
+* The left join retained 4,191 Airbnb observations without matching Tenancy records. These observations should be handled appropriately in subsequent analyses.
+* Airbnb prices are expressed per night, whereas Tenancy median rents are expressed per week. Weekly rents must be divided by seven for a basic daily-rate comparison; this does not account for differences in occupancy, property type or rental arrangements.
+
+## 6. Scripts and Data Availability
+
+The Python scripts are organised in the `Deliverable 5/` folder.
+
+| Script                 | Purpose                                                    |
+| ---------------------- | ---------------------------------------------------------- |
+| `D5_test_api.py`       | Tests a single Koordinates API query                       |
+| `D5_mapping.py`        | Queries and saves SA2-2026 mapping results                 |
+| `D5_add_sa2.py`        | Adds SA2-2026 codes to Airbnb                              |
+| `D5_sa2_2019.py`       | Maps Airbnb coordinates using the SA2-2019 shapefile       |
+| `D5_add_sa2_2019.py`   | Adds SA2-2019 codes to Airbnb                              |
+| `D5_final_join.py`     | Joins Airbnb and Tenancy using SA2-2019 codes and quarters |
+| `D5_central_median.py` | Calculates the Christchurch Central median Airbnb price    |
+
+Scripts should be executed from the project root because their data paths are relative to that directory.
+
+**Data availability:** The `Data/` folder is excluded by `.gitignore`. Generated datasets, including `airbnb_tenancy_joined.csv`, are not automatically shared through GitHub and must be provided separately to team members who need them.
+
+The API scripts obtain the Koordinates API key through the `KOORDINATES_API_KEY` environment variable. API keys should not be committed to the repository.
+
