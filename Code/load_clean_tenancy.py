@@ -15,9 +15,11 @@ end_date = pd.Timestamp("2026-06-30")
 
 def main():
     tenancy = pd.read_csv(data_path("raw","Detailed-Quarterly-Tenancy-Q1-2020-Q3-2026.csv"))
+    print(tenancy["TimeFrame"].head(20))
 
     # Convert TimeFrame → datetime
-    tenancy["TimeFrame"] = pd.to_datetime(tenancy["TimeFrame"], format="%d/%m/%Y", errors="coerce")
+    tenancy["TimeFrame"] = pd.to_datetime(tenancy["TimeFrame"],  errors="coerce")
+    print(tenancy["TimeFrame"].unique()[:10])
 
     # Filter to Airbnb timeframe
 

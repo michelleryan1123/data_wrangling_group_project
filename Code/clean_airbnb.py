@@ -6,7 +6,7 @@ sys.path.append(str(Path(__file__).resolve().parents[1]))
 import pandas as pd
 import numpy as np
 from pathlib import Path
-import utils.custom_functions as cf
+from Code.utils import custom_functions as cf
 from paths import data_path
 
 def main():

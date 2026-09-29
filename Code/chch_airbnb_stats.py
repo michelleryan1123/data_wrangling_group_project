@@ -6,7 +6,7 @@ sys.path.append(str(Path(__file__).resolve().parents[1]))
 import pandas as pd
 import matplotlib.pyplot as plt
 from paths import data_path, out_path
-import utils.custom_functions as cf
+from Code.utils import custom_functions as cf
 
 
 # ---------------------------------------------------------
