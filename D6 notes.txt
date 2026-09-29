@@ -1,0 +1,8 @@
+Notes for Ammar
+
+best coding practice
+- tidied up the folder structure so that all python files are in one coding folder, data is in a data folder with raw and processed data separate, plots are saved in own folder
+- split the files into smaller chunks and renamed them to be more descriptive
+- ensured all libraries are loaded at top of file
+- short description of the function of the file at top
+- cut back on comments - describe what a block of code does, not every line
