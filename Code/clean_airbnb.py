@@ -27,7 +27,7 @@ def main():
 
     # Impute missing prices using mean per ID
     mean_price_per_id = airbnb_cleaned.groupby("id")["price"].mean()
-    airbnb_cleaned["price"] = airbnb_cleaned["id"].map(mean_price_per_id)
+    airbnb_cleaned["price"] = airbnb_cleaned["price"].fillna(airbnb_cleaned["id"].map(mean_price_per_id))
 
     # Handle extreme outliers (>3000)
     grouped = airbnb_cleaned.groupby("id")
