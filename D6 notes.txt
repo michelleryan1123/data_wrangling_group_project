@@ -2,7 +2,14 @@ Notes for Ammar
 
 best coding practice
 - tidied up the folder structure so that all python files are in one coding folder, data is in a data folder with raw and processed data separate, plots are saved in own folder
+  - this was done so that things were more organised, easier to find and systematic
 - split the files into smaller chunks and renamed them to be more descriptive
+  - this was done so that each file had a specific purpose and it was clear in the title what the file did
 - ensured all libraries are loaded at top of file
+   - done for consistency
 - short description of the function of the file at top
+  - so that it is clear what each file does and what the outputs are and where they are saved
 - cut back on comments - describe what a block of code does, not every line
+ - this is to simplify the code and makes the code easier to follow
+- created a paths.py folder that defines all the paths in the project
+  - this is so that folders can be in different levels to the code and that the pipeline can easily move between and find folders
