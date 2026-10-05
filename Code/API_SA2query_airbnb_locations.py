@@ -1,7 +1,8 @@
-# ============================================================
+# =======================================================================
 # Query SA2 (Statistical Area 2) from Koordinates for each Airbnb listing
-# ============================================================
+# =======================================================================
 
+# import libraries
 import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parents[1]))
@@ -58,7 +59,7 @@ def query_sa2(row):
 
 
 # ------------------------------------------------------------
-# 2. Parallel processing wrapper
+# 2. Parallel processing set up for faster API queries
 # ------------------------------------------------------------
 
 def run_parallel(df, workers=None):
