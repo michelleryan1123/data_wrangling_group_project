@@ -178,7 +178,7 @@ def make_charts(matched, aq, rank, output: Path):
 def main():
     parser = ArgumentParser(description=__doc__)
     parser.add_argument("--airbnb", type=Path, default=Path("Data/processed/airbnb_with_sa2.csv"))
-    parser.add_argument("--tenancy", type=Path, default=Path("Data/processed/tenancy_cleaned_oct25_jun26.csv"))
+    parser.add_argument("--tenancy", type=Path, default=Path("Data/processed/tenancy_cleaned.csv"))
     parser.add_argument("--out", type=Path, default=Path("out/plots"))
     args = parser.parse_args()
 
