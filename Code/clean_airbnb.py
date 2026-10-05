@@ -1,3 +1,8 @@
+# ==========================================================
+# Clean the Christchurch Airbnb dataset to remove missing prices and extreme outliers. 
+# the output is a CSV file saved to the processed folder.
+# ==========================================================
+
 import sys
 from pathlib import Path
 
@@ -11,7 +16,7 @@ from paths import data_path
 
 def main():
     # Load raw combined Airbnb dataset
-    airbnb_chch = pd.read_csv(data_path("processed","chch_airbnb_oct25_jun26.csv"))
+    airbnb_chch = pd.read_csv(data_path("processed","chch_airbnb.csv"))
 
     # Summary before cleaning
     print("\nAirbnb summary before cleaning:")
@@ -52,7 +57,7 @@ def main():
     print(cf.summary_stats(airbnb_cleaned))
 
     # Save cleaned Airbnb dataset
-    output_file = data_path("processed", "airbnb_cleaned_oct25_jun26.csv")
+    output_file = data_path("processed", "airbnb_cleaned.csv")
     airbnb_cleaned.to_csv(output_file, index=False)
     print("Saved cleaned Airbnb dataset:", output_file)
 

@@ -1,6 +1,6 @@
-# ============================================
-# Join Airbnb + Tenancy datasets using SA2 + quarter
-# ============================================
+# =======================================================
+# Join Airbnb + Tenancy datasets using SA2 + year quarter. Output is a CSV file saved to the processed folder.
+# =======================================================
 
 import sys
 from pathlib import Path
@@ -35,7 +35,7 @@ def main():
 
     # 3. Load Tenancy
     tenancy = pd.read_csv(
-        data_path("processed", "tenancy_cleaned_oct25_jun26.csv"),
+        data_path("processed", "tenancy_cleaned.csv"),
         dtype={"Location Id": "string"}
     )
 

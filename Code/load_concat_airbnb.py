@@ -1,3 +1,7 @@
+# ==========================================================
+# Load the airbnb csv datasets and combine them into one file, which is then saved as a csv to the processed folder
+# ==========================================================
+
 import sys
 from pathlib import Path
 
@@ -10,7 +14,7 @@ import glob
 import numpy as np
 from paths import data_path
 
-import Code.utils.custom_functions as cf  # import the custom functions from the utils folder
+from Code.utils import custom_functions as cf  # import the custom functions from the utils folder
 
 
 def main():
@@ -30,7 +34,7 @@ def main():
     print(chch_airbnb["month_year"].value_counts())
 
     # Save output to data/processed/
-    output_file = data_path("processed", "chch_airbnb_oct25_jun26.csv")
+    output_file = data_path("processed", "chch_airbnb.csv")
     chch_airbnb.to_csv(output_file, index=False)
 
     print(f"\nSaved: {output_file}")

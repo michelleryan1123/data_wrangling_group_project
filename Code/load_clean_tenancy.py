@@ -1,4 +1,8 @@
-## Load and clean the tenancy dataset for the same timeframe as the Airbnb dataset (Oct 2025 - Jun 2026)
+# ==========================================================
+#  Load and clean the tenancy dataset for the same timeframe as the Airbnb dataset (Oct 2025 - Jun 2026). 
+#  This includes filtering to the relevant timeframe, remove missing IDs and standardising the Dwelling Type and Number of Beds columns.
+#  The output is a CSV file saved to the processed folder.
+# ==========================================================
 
 # Add project root to Python path
 import sys
@@ -50,7 +54,7 @@ def main():
     )
 
     # Save cleaned tenancy dataset
-    output_file = data_path("processed", "tenancy_cleaned_oct25_jun26.csv")
+    output_file = data_path("processed", "tenancy_cleaned.csv")
     tenancy_cleaned.to_csv(output_file, index=False)
     print("Saved cleaned tenancy dataset:", output_file)
 
