@@ -9,11 +9,16 @@ data_processed = Data/processed
 plots = out/plots
 
 # ------------------------------------------
+# define the final target to ensure Makefile runs all steps
+all: $(data_processed)/airbnb_vs_rental_comparison_final.csv
+
+# ------------------------------------------
 # STEP 1 — Load + concatenate Airbnb data
 # Output: Data/processed/chch_airbnb.csv
 # ------------------------------------------
 
-$(data_processed)/chch_airbnb.csv: $(code)/load_concat_airbnb.py $(data_raw)/listings_*.csv
+$(data_processed)/chch_airbnb.csv: \
+$(code)/load_concat_airbnb.py
 	python $(code)/load_concat_airbnb.py
 
 # ------------------------------------------
@@ -44,9 +49,9 @@ $(data_processed)/chch_airbnb.csv
 # ------------------------------------------
 
 $(data_processed)/tenancy_cleaned.csv: \
-$(code)/clean_tenancy.py \
+$(code)/load_clean_tenancy.py \
 $(data_raw)/Detailed-Quarterly-Tenancy-Q1-2020-Q3-2026.csv
-	python $(code)/clean_tenancy.py
+	python $(code)/load_clean_tenancy.py
 
 # ------------------------------------------
 # STEP 5 - Add location to airbnb data from SA2
