@@ -1,3 +1,7 @@
+# ==========================================================
+# Calculate simple summary statistics and generate histograms for the Christchurch Airbnb dataset
+# ==========================================================
+
 import sys
 from pathlib import Path
 
@@ -13,7 +17,7 @@ from Code.utils import custom_functions as cf
 # Load dataset
 # ---------------------------------------------------------
 def load_data():
-    df = pd.read_csv(data_path("processed", "chch_airbnb_oct25_jun26.csv"))
+    df = pd.read_csv(data_path("processed", "chch_airbnb.csv"))
     print("Loaded dataset:", df.shape)
     return df
 

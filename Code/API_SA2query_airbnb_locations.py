@@ -103,7 +103,7 @@ def main():
 
     # Run query if needed
     if run_query:
-        clean_airbnb = pd.read_csv(data_path("processed", "airbnb_cleaned_oct25_jun26.csv"))
+        clean_airbnb = pd.read_csv(data_path("processed", "airbnb_cleaned.csv"))
 
         unique_rows = clean_airbnb.drop_duplicates(subset=["id"])[["id", "latitude", "longitude"]]
 
@@ -125,7 +125,7 @@ def main():
 
     print("\n=== SANITY CHECKS ON FINAL SA2 FILE ===")
 
-    pre_API = pd.read_csv(data_path("processed", "airbnb_cleaned_oct25_jun26.csv"))
+    pre_API = pd.read_csv(data_path("processed", "airbnb_cleaned.csv"))
     after_API = pd.read_csv(data_path("processed", "airbnb_with_sa2.csv"))
 
     print(f"Rows in cleaned Airbnb dataset: {len(pre_API)}")

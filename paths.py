@@ -1,3 +1,7 @@
+# =================================================
+# Defines all the folder paths used for the project 
+# =================================================
+
 from pathlib import Path
 
 PROJECT_NAME = "DATA422_group_project"

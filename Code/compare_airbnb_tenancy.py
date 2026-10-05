@@ -1,3 +1,8 @@
+# ==========================================================
+# Compare Airbnb listings vs Active Rental Bonds based on SA2 location (from StatsNZ). The output is a CSV file saved to the processed folder, and a bar chart saved to out/plots.
+# The output is a comparison csv saved to the processed folder, and a figure saved to the plots folder
+# ==========================================================
+
 import pandas as pd
 import matplotlib.pyplot as plt
 from paths import data_path

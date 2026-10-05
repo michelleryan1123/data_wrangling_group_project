@@ -1,10 +1,7 @@
-'''Area-level Airbnb vs Tenancy rental price comparison.
 
-Run from the project root after running D5_prepare_from_mapping.py and fixing D4 Tenancy:
-    python D5_price_gap_current.py
-All input datasets stay local. Results are written to out/plots.
-The source coordinate mapping's geographic vintage must be verified separately.
-'''
+# ============================================================
+# Compare Airbnb vs Tenancy rental price gaps by SA2 location and quarter (using the joined dataset). Plots are saved to the out/plots folder.
+# ============================================================
 
 # Add project root to Python path
 import sys
