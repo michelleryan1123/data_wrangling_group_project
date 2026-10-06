@@ -26,6 +26,7 @@ def main():
     month = airbnb["month_year"].str.upper()
     month = month.str.replace("APRIL", "APR", regex=False)
     month = month.str.replace("JUNE", "JUN", regex=False)
+    month = month.str.replace("JLY", "JUL", regex=False)
 
     airbnb["quarter"] = (
         pd.to_datetime(month, format="%b%y")
