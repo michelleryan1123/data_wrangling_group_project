@@ -1,4 +1,4 @@
-# Query the API for location data and enter into the AirBnB dataset
+﻿# Query the API for location data and enter into the AirBnB dataset
 
 import requests
 import pandas as pd
@@ -13,7 +13,7 @@ def query_sa2(row):
     # the URL for the API query, including the API key and parameters for the specific layer and coordinates
     url = (
         "https://koordinates.com/services/query/v1/vector.json"
-        f"?key=ab6b9d0f62314f00840b4637d351ce5a"
+        f"?key=REDACTED"
         f"&layer=123515"
         f"&x={lon}"
         f"&y={lat}"
