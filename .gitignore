@@ -222,3 +222,4 @@ __marimo__/
 
 # Local pipeline test logs
 out/logs/
+out/plots/
