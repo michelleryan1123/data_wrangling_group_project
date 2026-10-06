@@ -1,82 +1,134 @@
 # ==========================================================
-# Compare Airbnb listings vs Active Rental Bonds based on SA2 location (from StatsNZ). The output is a CSV file saved to the processed folder, and a bar chart saved to out/plots.
-# The output is a comparison csv saved to the processed folder, and a figure saved to the plots folder
+# Compare Airbnb listings vs Active Rental Bonds based on
+# SA2 location.
+#
+# Outputs:
+# - comparison CSV in Data/processed
+# - comparison bar chart in out/plots
 # ==========================================================
-# Add project root to Python path
+
 import sys
 from pathlib import Path
+
+# Add project root to Python path
 sys.path.append(str(Path(__file__).resolve().parents[1]))
-from paths import data_path
+
 import pandas as pd
 import matplotlib.pyplot as plt
-from pathlib import Path
+
+from paths import data_path, out_path
 
 
 def main():
 
-    print("\n=== STEP 8: Compare Airbnb listings vs Active Rental Bonds ===")
-
-    # ============================================================
-    # 1. LOAD THE ALREADY-JOINED DATASET
-    # ============================================================
-
-    df = pd.read_csv(data_path("processed", "airbnb_tenancy_joined.csv"))
-
-    # ============================================================
-    # 2. COUNT UNIQUE AIRBNB LISTINGS BY SA2 LOCATION
-    # ============================================================
-
-    airbnb_counts = (
-        df.groupby(["sa2_code", "sa2_name"])["id"]
-        .nunique()
-        .reset_index(name="Airbnb Listings")
+    print(
+        "\n=== STEP 8: Compare Airbnb listings "
+        "vs Active Rental Bonds ==="
     )
 
     # ============================================================
-    # 3. GET ACTIVE RENTAL BONDS BY SA2 LOCATION
+    # 1. Load the already-joined dataset
+    # ============================================================
+
+    df = pd.read_csv(
+        data_path(
+            "processed",
+            "airbnb_tenancy_joined.csv"
+        )
+    )
+
+    # ============================================================
+    # 2. Count unique Airbnb listings by SA2
+    # ============================================================
+
+    airbnb_counts = (
+        df
+        .groupby(
+            [
+                "sa2_code",
+                "sa2_name"
+            ]
+        )["id"]
+        .nunique()
+        .reset_index(
+            name="Airbnb Listings"
+        )
+    )
+
+    # ============================================================
+    # 3. Get Active Rental Bonds by SA2
     # ============================================================
 
     rental_data = (
-        df[["sa2_code", "sa2_name", "quarter", "Active Bonds"]]
-        .dropna(subset=["Active Bonds"])
+        df[
+            [
+                "sa2_code",
+                "sa2_name",
+                "quarter",
+                "Active Bonds"
+            ]
+        ]
+        .dropna(
+            subset=[
+                "Active Bonds"
+            ]
+        )
         .drop_duplicates()
     )
 
     rental_counts = (
-        rental_data.groupby(["sa2_code", "sa2_name"])["Active Bonds"]
+        rental_data
+        .groupby(
+            [
+                "sa2_code",
+                "sa2_name"
+            ]
+        )["Active Bonds"]
         .max()
-        .reset_index(name="Active Rental Bonds")
+        .reset_index(
+            name="Active Rental Bonds"
+        )
     )
 
     # ============================================================
-    # 4. MERGE THE TWO COUNTS INTO ONE COMPARISON TABLE
+    # 4. Merge Airbnb and rental counts
     # ============================================================
 
     comparison = airbnb_counts.merge(
         rental_counts,
-        on=["sa2_code", "sa2_name"],
+        on=[
+            "sa2_code",
+            "sa2_name"
+        ],
         how="left"
     )
 
     # ============================================================
-    # 5. CALCULATE THE DIFFERENCE
+    # 5. Calculate difference
     # ============================================================
 
     comparison["Difference"] = (
-        comparison["Airbnb Listings"] - comparison["Active Rental Bonds"]
+        comparison["Airbnb Listings"]
+        - comparison["Active Rental Bonds"]
     )
 
     # ============================================================
-    # 6. SORT BY LOCATION
+    # 6. Sort by location
     # ============================================================
 
-    comparison = comparison.sort_values("sa2_name")
+    comparison = comparison.sort_values(
+        "sa2_name"
+    )
 
     # ============================================================
-    # 7. DISPLAY THE RESULTS
+    # 7. Display results
     # ============================================================
 
-    print("\nAirbnb Listings vs Active Rental Bonds by Location:\n")
+    print(
+        "\nAirbnb Listings vs Active Rental Bonds "
+        "by Location:\n"
+    )
+
     print(
         comparison[
             [
@@ -86,48 +138,93 @@ def main():
                 "Active Rental Bonds",
                 "Difference"
             ]
-        ].to_string(index=False)
+        ].to_string(
+            index=False
+        )
     )
 
     # ============================================================
-    # 8. SAVE THE COMPARISON TABLE
+    # 8. Save comparison table
     # ============================================================
 
-    output_csv = data_path("processed", "airbnb_vs_rental_comparison_final.csv")
-    comparison.to_csv(output_csv, index=False)
-    print(f"\nResults saved to {output_csv}")
+    output_csv = data_path(
+        "processed",
+        "airbnb_vs_rental_comparison_final.csv"
+    )
+
+    comparison.to_csv(
+        output_csv,
+        index=False
+    )
+
+    print(
+        f"\nResults saved to {output_csv}"
+    )
 
     # ============================================================
-    # 9. CREATE A BAR CHART
+    # 9. Create comparison bar chart
     # ============================================================
 
     chart_data = (
-        comparison.sort_values("Airbnb Listings", ascending=False)
+        comparison
+        .sort_values(
+            "Airbnb Listings",
+            ascending=False
+        )
         .head(15)
-        .sort_values("Airbnb Listings")
+        .sort_values(
+            "Airbnb Listings"
+        )
     )
 
-    chart_data.set_index("sa2_name")[["Airbnb Listings", "Active Rental Bonds"]].plot(
+    chart_data.set_index(
+        "sa2_name"
+    )[
+        [
+            "Airbnb Listings",
+            "Active Rental Bonds"
+        ]
+    ].plot(
         kind="barh",
         figsize=(12, 8)
     )
 
     plt.xlabel("Number")
     plt.ylabel("SA2 Location")
-    plt.title("Airbnb Listings vs Active Rental Bonds by SA2 Location")
+
+    plt.title(
+        "Airbnb Listings vs Active Rental Bonds "
+        "by SA2 Location"
+    )
+
     plt.legend()
     plt.tight_layout()
 
-    # Save plot into out/plots
-    plots_dir = Path("out/plots")
-    plots_dir.mkdir(parents=True, exist_ok=True)
-    plt.savefig(plots_dir / "airbnb_vs_rental_barchart.png", dpi=170)
+    # Use central project output-path helper
+    plot_file = out_path(
+        "plots",
+        "airbnb_vs_rental_barchart.png"
+    )
 
-    print(f"Plot saved to {plots_dir / 'airbnb_vs_rental_barchart.png'}")
+    plot_file.parent.mkdir(
+        parents=True,
+        exist_ok=True
+    )
+
+    plt.savefig(
+        plot_file,
+        dpi=170
+    )
+
+    print(
+        f"Plot saved to {plot_file}"
+    )
 
     plt.close()
 
-    print("\nComparison step complete.")
+    print(
+        "\nComparison step complete."
+    )
 
 
 if __name__ == "__main__":
