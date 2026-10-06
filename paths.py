@@ -1,23 +1,30 @@
 # =================================================
-# Defines all the folder paths used for the project 
+# Defines all folder paths used for the project
 # =================================================
 
 from pathlib import Path
 
-PROJECT_NAME = "DATA422_group_project"
+
+# paths.py is stored in the project root,
+# so the directory containing this file is the root.
+PROJECT_ROOT = Path(__file__).resolve().parent
+
 
 def project_root():
-    # Start at this file and walk up until we find the project folder
-    p = Path(__file__).resolve()
-    while p.name != PROJECT_NAME:
-        p = p.parent
-    return p
+    """Return the root directory of the project."""
+    return PROJECT_ROOT
+
 
 def data_path(*parts):
-    return project_root() / "Data" / Path(*parts)
+    """Return a path inside the Data folder."""
+    return PROJECT_ROOT / "Data" / Path(*parts)
+
 
 def code_path(*parts):
-    return project_root() / "Code" / Path(*parts)
+    """Return a path inside the Code folder."""
+    return PROJECT_ROOT / "Code" / Path(*parts)
+
 
 def out_path(*parts):
-    return project_root() / "out" / Path(*parts)
+    """Return a path inside the out folder."""
+    return PROJECT_ROOT / "out" / Path(*parts)
