@@ -51,7 +51,7 @@ values are imputed.
 The affected pipeline step was then re-run to verify that the corrected
 logic produced the intended result.
 
-## corrected code
+## Corrected code
 mean_price_per_id = airbnb_cleaned.groupby("id")["price"].mean()airbnb_cleaned["price"] = airbnb_cleaned["id"].map(mean_price_per_id)
 
 corrected to
