@@ -26,6 +26,7 @@ def query_sa2(row):
 
     api_key = os.getenv("KOORDINATES_API_KEY")
 
+
     if not api_key:
         raise RuntimeError(
             "KOORDINATES_API_KEY environment variable is not set."
