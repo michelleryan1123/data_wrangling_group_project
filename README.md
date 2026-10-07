@@ -2,7 +2,420 @@
 
 Repository for our DATA201/422 Christchurch Rental Market group project.
 
-## Dataset Source - Airbnb
+ Dataset Source - Airbnb
+ 
+# Deliverable 6 – Automation Changes and Updated Airbnb Data
+## Overview
+
+For Deliverable 6, the existing data-wrangling workflow was converted into a reproducible, automated end-to-end pipeline. The pipeline reduces manual work, improves reproducibility, adds validation, and makes the project easier for another team member to run.
+
+The complete workflow can now be run with:
+
+```bash
+python data_wrangling_pipeline.py
+```
+
+
+The pipeline runs all 8 project stages in sequence.
+
+---
+
+## 1. One-Command End-to-End Pipeline
+
+Created `data_wrangling_pipeline.py` as the single entry point for the project.
+
+```bash
+python data_wrangling_pipeline.py
+```
+
+This runs all 8 stages of the data wrangling workflow in the correct order.
+
+---
+
+## 2. Automatic Input Checking
+
+The pipeline checks that the required Airbnb and Tenancy Services input files exist before processing begins.
+
+If an important input file is missing, the pipeline stops early and reports a clear error.
+
+---
+
+## 3. Automatic Folder Creation
+
+The pipeline automatically creates the required project folders:
+
+```text
+Data/raw/
+Data/processed/
+out/plots/
+out/logs/
+```
+
+This reduces the amount of manual project setup required.
+
+---
+
+## 4. Centralised Path Management
+
+`paths.py` was improved so that the project root is determined from the location of `paths.py` itself.
+
+The project therefore no longer depends on the repository being named exactly:
+
+```text
+DATA422_group_project
+```
+
+This improves portability and reproducibility across different machines and folder locations.
+
+---
+
+## 5. Centralised Configuration
+
+A new `config.py` file was added to store important project settings in one location, including:
+
+* Airbnb extreme-price threshold
+* Koordinates layer ID
+* Number of API workers
+
+This reduces hard-coded values across individual scripts and makes configuration easier to maintain.
+
+---
+
+## 6. Smarter SA2 API Automation
+
+The SA2 mapping process was improved so that existing valid mappings are reused.
+
+Only listings without an existing SA2 mapping are sent to the Koordinates API.
+
+Final run:
+
+* Current listings: **3,949**
+* Reusable mappings: **3,949**
+* New API queries required: **0**
+
+This avoids unnecessary API requests and significantly reduces processing time when the pipeline is rerun.
+
+---
+
+## 7. Secure API Key Handling
+
+The Koordinates API key is no longer stored directly in the active project code.
+
+Instead, it is read from the environment variable:
+
+```text
+KOORDINATES_API_KEY
+```
+
+This prevents the API key from being exposed in the repository and improves security when working with GitHub and collaborating as a team.
+
+---
+
+## 8. Final Output Validation
+
+At the end of the pipeline, the expected datasets and plots are checked automatically.
+
+Each expected output is reported as either:
+
+```text
+PASS
+```
+
+or
+
+```text
+FAIL
+```
+
+If an important output is missing, the pipeline raises an error instead of silently completing.
+
+---
+
+## 9. End-to-End Validation
+
+The complete pipeline was run from beginning to end.
+
+Results:
+
+* All 8 stages completed successfully.
+* All expected outputs passed the final validation.
+* The pipeline completed successfully with:
+
+```text
+PIPELINE COMPLETE
+```
+
+---
+
+## 10. Automatic Month-Label Correction
+
+Automatic month-label correction was added to handle incorrect month labels in the Airbnb data.
+
+The following incorrect labels:
+
+```text
+OCT26
+NOV26
+DEC26
+```
+
+are automatically corrected to:
+
+```text
+OCT25
+NOV25
+DEC25
+```
+
+The correction is applied every time the data is loaded, so it does not require manual editing of the source data.
+
+---
+
+## 11. Improved Airbnb Cleaning Checks
+
+The Airbnb cleaning stage now checks for:
+
+* Missing prices
+* Non-positive prices
+* Extreme prices
+* Duplicate listing-month rows
+
+Final cleaning results:
+
+- **35,181 listing-month observations**
+- **4,099 unique listings**
+- **0 missing prices**
+- **0 non-positive prices**
+- **0 prices above the $3,000 threshold**
+- **0 duplicate listing-month rows**
+
+---
+
+## 12. Corrected Top 10% Reviews Logic
+
+The review filtering logic was corrected.
+
+The previous implementation selected values below the 90th percentile, which represented approximately the bottom 90% rather than the top 10%.
+
+The logic was changed to select values **at or above the 90th percentile**, correctly representing approximately the top 10% of reviews.
+
+---
+
+## 13. Corrected Helper Function Return Order
+
+A helper function was returning the summary and dataframe in the wrong order.
+
+The return order was corrected so that it matches the order expected by the calling script.
+
+---
+
+## 14. Join Validation
+
+Validation was added to the Airbnb and Tenancy join to ensure that Airbnb rows are preserved and that the join does not unexpectedly remove or duplicate records.
+
+Final results:
+
+| Check       |   Rows |
+| ----------- | -----: |
+| Before join | 28,281 |
+| After join  | 28,281 |
+| Matched     | 21,558 |
+| Unmatched   |  6,723 |
+
+This helps detect accidental row loss or duplication during the join.
+
+---
+
+## 15. Defensive Programming
+
+Additional validation checks were added throughout the pipeline for:
+
+* Required columns
+* Duplicate rows
+* Missing values
+* Unexpected row-count changes
+* Missing SA2 mappings
+* Invalid API responses
+* API request failures
+
+These checks allow problems to be detected earlier during processing.
+
+---
+
+## 16. Reusable Intermediate Outputs
+
+Processed datasets are saved between pipeline stages.
+
+Later stages can reuse these outputs rather than repeating expensive processing.
+
+This is particularly useful for the SA2 mapping stage, where existing mappings can be reused instead of making unnecessary API requests.
+
+---
+
+## 17. UTF-8 Output Support
+
+The pipeline was updated to support UTF-8 terminal output more reliably.
+
+This allows terminal output to be saved to log files without issues caused by unsupported characters.
+
+---
+
+## 18. Pipeline Logging
+
+Complete pipeline runs can be saved to a log file.
+
+Example:
+
+```powershell
+python .\data_wrangling_pipeline.py 2>&1 | Tee-Object -FilePath .\out\logs\d6_full_pipeline_test.txt
+```
+
+This provides a record of the pipeline execution and evidence that the workflow completed successfully.
+
+---
+
+## 19. Generated Files Excluded from Git
+
+The following generated output directories were added to `.gitignore`:
+
+```text
+out/logs/
+out/plots/
+```
+
+These files can be regenerated automatically by running the pipeline and therefore do not need to be committed to the repository.
+
+---
+
+## 20. Removed Hard-Coded API Key from Archived Code
+
+An archived script containing a hard-coded Koordinates API key was sanitised.
+
+The API key is no longer visible in the current repository version.
+
+---
+
+## 21. Integration with the Main Branch
+
+The automation changes were integrated into the latest main branch.
+
+The process included:
+
+* Integrating the automation with the latest team code
+* Resolving merge conflicts
+* Testing the complete integrated pipeline
+* Pushing the changes
+* Merging through a pull request
+* Pulling the updated changes back into `main`
+
+---
+
+## 22. Compatibility with Shared Project Scripts
+
+The automated pipeline uses the existing core scripts from the group project.
+
+The automation is therefore integrated into the existing project workflow rather than being a separate duplicate system.
+
+---
+
+## 23. Methodological Limitation
+
+The current Koordinates API uses **SA2-2026** geography, while the Tenancy geography had previously been documented as **SA2-2019**.
+
+This remains a methodological limitation of the current workflow and should be considered when interpreting the joined results.
+
+---
+
+## Summary
+
+The Deliverable 6 work converted the existing individual scripts into a reproducible end-to-end pipeline.
+
+The pipeline now:
+
+* Runs the complete workflow with one command
+* Checks required inputs automatically
+* Creates required folders
+* Uses centralised paths and configuration
+* Reuses existing SA2 mappings
+* Handles the Koordinates API key securely
+* Validates intermediate and final outputs
+* Saves reusable processed datasets
+* Supports pipeline logging
+* Detects data and processing errors earlier
+
+Overall, the automation makes the project **more reproducible, secure, reliable, and easier to rerun**.
+
+
+For Deliverable 6, the Airbnb dataset was updated to include two additional months that were not available in Deliverable 4: **July 2026 and August 2026**.
+
+The Deliverable 4 dataset covered the period from **October 2025 to June 2026**, so July and August 2026 were previously omitted from the analysis.
+
+| **Item** | **Deliverable 4** | **Deliverable 6** |
+| ---------- | ----------------- | ----------------- |
+| Study period | October 2025 – June 2026 | October 2025 – August 2026 |
+| Number of Airbnb months | 9 | 11 |
+| Newly added months | None | July 2026, August 2026 |
+| Source | Inside Airbnb | Inside Airbnb |
+| Location | Christchurch City, New Zealand | Christchurch City, New Zealand |
+
+The two newly added Airbnb source files were:
+
+- `JLY26_listings.csv`
+- `AUG26_listings.csv`
+
+These files were incorporated into the existing Airbnb processing pipeline so that they underwent the same cleaning and processing procedures as the previously used monthly datasets.
+
+### Previously Omitted Data
+
+The July and August 2026 Airbnb observations were omitted from Deliverable 4 because the study period ended in June 2026.
+
+Deliverable 6 extends the Airbnb study period to **August 2026**, allowing more recent Airbnb activity in Christchurch to be included in the analysis.
+
+### Month Label Correction
+
+The July 2026 Airbnb dataset used the month label `JLY26`. This did not match the standard month format used by the processing code.
+
+The processing pipeline was therefore updated to convert:
+
+`JLY26` → `JUL26`
+
+This allowed July 2026 to be interpreted correctly during date conversion and subsequent analysis.
+
+### Updated Airbnb Dataset
+
+After incorporating the additional months and processing the complete dataset, the updated Airbnb dataset contains:
+
+- **35,181 listing-month observations**
+- **7 variables**
+- **Study period:** October 2025 – August 2026
+
+The variables retained are:
+
+| **Column** | **Meaning** |
+| ---------- | ----------- |
+| `id` | Unique Airbnb listing identifier |
+| `neighbourhood` | Christchurch neighbourhood or ward |
+| `latitude` | Latitude of the Airbnb listing |
+| `longitude` | Longitude of the Airbnb listing |
+| `price` | Nightly Airbnb listing price |
+| `month_year` | Month and year associated with the monthly dataset |
+| `room_type` | Type of Airbnb accommodation |
+
+### Tenancy Services Coverage
+
+The Tenancy Services dataset used in the project does not contain a corresponding Q3 2026 quarter. The available tenancy data covers the quarters through **April–June 2026 (Q2 2026)**.
+
+Therefore:
+
+- July 2026 Airbnb observations do not have a corresponding Tenancy Services quarter.
+- August 2026 Airbnb observations do not have a corresponding Tenancy Services quarter.
+- Direct Airbnb-to-Tenancy comparisons remain limited to quarters where both datasets are available.
+
+### 
+
+The addition of July and August 2026 means that the Airbnb time series now contains two months that were previously omitted.
+
+------------------------------------------------------------------------------------------
 
 For Deliverable 4, we use the combined Christchurch Airbnb dataset created in
 Deliverable 3.
