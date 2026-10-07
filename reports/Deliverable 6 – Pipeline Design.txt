@@ -1,0 +1,239 @@
+## Deliverable 6 – Pipeline Design Principles
+
+### Design Principles Task
+
+For Deliverable 6, we reviewed the reorganised `clean_tidy` pipeline and documented its design principles.
+
+The purpose of this review was to describe:
+
+1. the inputs to the pipeline,
+2. the outputs produced by the pipeline,
+3. the main processing stages, and
+4. the coding and software strategies used throughout the project.
+
+The document was checked against the actual implementation in the `clean_tidy` branch so that the documentation reflects what the code currently does.
+
+---
+
+### 1. Pipeline Inputs
+
+The pipeline uses two main data sources.
+
+#### Airbnb data
+
+Monthly Airbnb listing CSV files are stored in:
+
+`Data/raw/`
+
+These files contain variables such as:
+
+- listing ID,
+- latitude and longitude,
+- nightly price,
+- room type,
+- neighbourhood,
+- observation month,
+- and review-related information.
+
+#### Tenancy data
+
+The raw Tenancy Services quarterly dataset is:
+
+`Detailed-Quarterly-Tenancy-Q1-2020-Q3-2026.csv`
+
+It contains long-term rental information such as:
+
+- Location ID,
+- dwelling type,
+- number of bedrooms,
+- median weekly rent,
+- Active Bonds,
+- Total Bonds,
+- and other rental statistics.
+
+#### Geographic information
+
+The pipeline also uses the Koordinates Query API to obtain Statistical Area 2 (SA2) codes and area names from Airbnb latitude and longitude coordinates.
+
+The current implementation queries Koordinates layer `123515`, which provides SA2-2026 geographic areas.
+
+---
+
+### 2. Pipeline Outputs
+
+Processed datasets are stored in:
+
+`Data/processed/`
+
+Important outputs include:
+
+- `chch_airbnb_oct25_jun26.csv`
+- `airbnb_cleaned_oct25_jun26.csv`
+- `tenancy_cleaned_oct25_jun26.csv`
+- `airbnb_with_sa2.csv`
+- `airbnb_tenancy_joined.csv`
+- `listing_quarter_gaps.csv`
+- `area_quarter_gaps.csv`
+- `area_gap_summary.csv`
+- `sensitivity.csv`
+- `airbnb_vs_rental_comparison_final.csv`
+
+Visual outputs are stored separately in:
+
+`out/plots/`
+
+Examples include:
+
+- Airbnb price histograms,
+- Airbnb review histograms,
+- price-gap distributions,
+- and Airbnb versus Active Rental Bonds comparison charts.
+
+---
+
+### 3. Main Pipeline Steps
+
+The complete workflow is controlled by:
+
+`data_wrangling_pipeline.py`
+
+The pipeline runs eight main stages in sequence.
+
+#### Step 1 – Load and combine Airbnb files
+
+`load_concat_airbnb.py`
+
+Loads the monthly raw Airbnb CSV files, combines them, filters the data to Christchurch, and produces the combined Christchurch Airbnb dataset.
+
+#### Step 2 – Airbnb summary statistics and plots
+
+`chch_airbnb_stats.py`
+
+Produces exploratory summary statistics and visualisations for the combined Airbnb dataset.
+
+#### Step 3 – Clean Airbnb data
+
+`clean_airbnb.py`
+
+Keeps the variables required for later analysis, handles missing prices, deals with extreme price values, and produces the cleaned Airbnb dataset.
+
+#### Step 4 – Clean Tenancy data
+
+`load_clean_tenancy.py`
+
+Loads and cleans the quarterly Tenancy Services dataset and restricts it to the study period.
+
+#### Step 5 – Add SA2 geographic information
+
+`API_SA2query_airbnb_locations.py`
+
+Uses Airbnb latitude and longitude coordinates to query the Koordinates API and assign SA2 area codes and names.
+
+The script also checks whether a complete SA2 output already exists so that thousands of API requests do not need to be repeated unnecessarily.
+
+#### Step 6 – Join Airbnb and Tenancy datasets
+
+`join_airbnb_tenancy.py`
+
+Converts Airbnb monthly observations into calendar quarters and joins Airbnb with the Tenancy dataset using SA2 area code and quarter.
+
+A left join is used so that all Airbnb observations are retained.
+
+The join is validated using `validate="many_to_one"` and row-count checks.
+
+#### Step 7 – Analyse rental price gaps
+
+`price_gap.py`
+
+Calculates Airbnb listing-quarter median nightly prices and compares them with the nightly equivalent of Tenancy median weekly rents.
+
+The analysis also performs sensitivity checks using different minimum listing, bond, and quarter requirements.
+
+#### Step 8 – Compare Airbnb listings and rental activity
+
+`compare_airbnb_tenancy.py`
+
+Counts unique Airbnb listings by SA2 area and compares them with the maximum recorded Active Bonds value for each location.
+
+The results are saved as a comparison table and visualised using a bar chart.
+
+---
+
+### 4. Coding and Software Strategies
+
+Several coding practices were adopted to improve the structure, readability and reproducibility of the project.
+
+#### Modular code structure
+
+Each major processing task is stored in a separate Python script with a `main()` function.
+
+This separates different responsibilities such as loading, cleaning, joining and analysis.
+
+#### Single pipeline entry point
+
+`data_wrangling_pipeline.py` runs the major scripts in the required order.
+
+This makes the workflow easier to reproduce because the user does not need to manually remember the execution order of every script.
+
+#### Centralised path management
+
+The project uses `paths.py` to construct paths through reusable functions such as:
+
+- `data_path()`
+- `code_path()`
+- `out_path()`
+
+This reduces repeated path code and avoids machine-specific absolute paths.
+
+#### Separation of raw and processed data
+
+Original input data and generated processed data are stored separately.
+
+This makes it easier to distinguish source data from files produced by the pipeline.
+
+#### Descriptive file naming
+
+Scripts are named according to their purpose, for example:
+
+- `clean_airbnb.py`
+- `join_airbnb_tenancy.py`
+- `price_gap.py`
+
+rather than only being identified by assignment deliverable numbers.
+
+#### Validation and defensive programming
+
+Several pipeline stages perform explicit checks before continuing.
+
+Examples include:
+
+- checking required columns,
+- detecting duplicate observations,
+- validating expected quarters,
+- checking prices,
+- checking unique join keys,
+- checking missing SA2 values,
+- comparing row counts before and after joins,
+- and using `validate="many_to_one"` during merges.
+
+These checks help detect data-processing errors before they affect later analysis.
+
+#### Reusable intermediate outputs
+
+Important processed datasets are saved between stages.
+
+This allows later stages to reuse existing results instead of repeating expensive operations such as API queries.
+
+#### Parameterisation and sensitivity analysis
+
+The price-gap analysis allows parameters such as minimum listings, minimum bonds and qualifying quarters to be changed.
+
+Several sensitivity scenarios are run to test whether the conclusions depend strongly on particular analytical assumptions.
+
+---
+
+### AI Use
+
+This Design Principles document was drafted with assistance from **ChatGPT by OpenAI (GPT-5.6 Sol)**.
+
+The generated content was reviewed against the actual project code in the `clean_tidy` branch. The project team is responsible for checking and revising the document so that it accurately reflects the final implementation and intended workflow.
